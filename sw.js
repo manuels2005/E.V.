@@ -15,7 +15,7 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   // Network-first for API calls (Supabase, Anthropic), cache-first for app shell
-  if (e.request.url.includes('supabase.co') || e.request.url.includes('anthropic.com')) {
+  if (e.request.url.includes('supabase.co') || e.request.url.includes('generativelanguage.googleapis.com')) {
     return; // let these hit the network directly, don't cache
   }
   e.respondWith(
