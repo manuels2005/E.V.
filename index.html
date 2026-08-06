@@ -261,15 +261,15 @@
 // ---------- CONFIG / SETTINGS ----------
 const CFG_KEY = 'ev-tracker-config';
 let cfg = JSON.parse(localStorage.getItem(CFG_KEY) || '{}');
-let supabase = null;
+let supabaseClient = null;
 
 function initSupabase(){
   if(cfg.supaUrl && cfg.supaKey){
     try{
-      supabase = window.supabase.createClient(cfg.supaUrl, cfg.supaKey);
+      supabaseClient = window.supabase.createClient(cfg.supaUrl, cfg.supaKey);
       document.getElementById('syncState').textContent = 'CLOUD';
     }catch(e){
-      supabase = null;
+      supabaseClient = null;
       document.getElementById('syncState').textContent = 'LOCAL';
     }
   } else {
@@ -296,10 +296,10 @@ async function saveSettings(){
   initSupabase();
 
   const statusEl = document.getElementById('syncStatusMsg');
-  if(supabase && cfg.syncCode){
+  if(supabaseClient && cfg.syncCode){
     statusEl.textContent = 'Connecting...';
     statusEl.className = 'sync-status';
-    const { data, error } = await supabase.from('ev_tracker').select('*').eq('sync_code', cfg.syncCode).maybeSingle();
+    const { data, error } = await supabaseClient.from('ev_tracker').select('*').eq('sync_code', cfg.syncCode).maybeSingle();
     if(error){
       statusEl.textContent = 'Error: ' + error.message + ' (did you create the table? see instructions)';
       statusEl.className = 'sync-status err';
@@ -308,7 +308,7 @@ async function saveSettings(){
     if(data){
       state = data.state;
     } else {
-      await supabase.from('ev_tracker').insert({ sync_code: cfg.syncCode, state });
+      await supabaseClient.from('ev_tracker').insert({ sync_code: cfg.syncCode, state });
     }
     statusEl.textContent = 'Connected. Synced across devices with this code.';
     statusEl.className = 'sync-status ok';
@@ -404,8 +404,8 @@ function deleteLog(id){
 
 async function save(){
   localStorage.setItem('ev-tracker-state-local', JSON.stringify(state));
-  if(supabase && cfg.syncCode){
-    await supabase.from('ev_tracker').update({ state, updated_at: new Date().toISOString() }).eq('sync_code', cfg.syncCode);
+  if(supabaseClient && cfg.syncCode){
+    await supabaseClient.from('ev_tracker').update({ state, updated_at: new Date().toISOString() }).eq('sync_code', cfg.syncCode);
   }
 }
 
