@@ -245,8 +245,8 @@
     <label>SUPABASE ANON PUBLIC KEY</label>
     <input id="cfgSupaKey" type="text" placeholder="eyJhbGciOi...">
 
-    <label>ANTHROPIC API KEY (for E.V. chat — optional)</label>
-    <input id="cfgAnthropicKey" type="password" placeholder="sk-ant-...">
+    <label>GEMINI API KEY (for E.V. chat — optional)</label>
+    <input id="cfgGeminiKey" type="password" placeholder="AIza...">
 
     <div class="sync-status" id="syncStatusMsg"></div>
     <div class="modal-actions">
@@ -281,7 +281,7 @@ function openSettings(){
   document.getElementById('cfgSyncCode').value = cfg.syncCode || '';
   document.getElementById('cfgSupaUrl').value = cfg.supaUrl || '';
   document.getElementById('cfgSupaKey').value = cfg.supaKey || '';
-  document.getElementById('cfgAnthropicKey').value = cfg.anthropicKey || '';
+  document.getElementById('cfgGeminiKey').value = cfg.geminiKey || '';
   document.getElementById('syncStatusMsg').textContent = '';
   document.getElementById('settingsModal').classList.add('show');
 }
@@ -291,7 +291,7 @@ async function saveSettings(){
   cfg.syncCode = document.getElementById('cfgSyncCode').value.trim();
   cfg.supaUrl = document.getElementById('cfgSupaUrl').value.trim();
   cfg.supaKey = document.getElementById('cfgSupaKey').value.trim();
-  cfg.anthropicKey = document.getElementById('cfgAnthropicKey').value.trim();
+  cfg.geminiKey = document.getElementById('cfgGeminiKey').value.trim();
   localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
   initSupabase();
 
@@ -433,16 +433,16 @@ async function sendChat(){
   const text = input.value.trim();
   if(!text) return;
 
-  if(!cfg.anthropicKey){
+  if(!cfg.geminiKey){
     pushMsg('user', text);
     input.value = '';
-    pushMsg('ev', 'No API key configured. Tap the ⚙ icon and add your Anthropic API key to activate this channel.');
+    pushMsg('ev', 'No API key configured. Tap the ⚙ icon and add your Gemini API key to activate this channel.');
     return;
   }
 
   input.value = '';
   pushMsg('user', text);
-  chatHistory.push({role:'user', content:text});
+  chatHistory.push({role:'user', parts:[{text:text}]});
 
   const typing = document.createElement('div');
   typing.className = 'typing'; typing.id = 'typingIndicator'; typing.textContent = 'E.V. is thinking...';
@@ -464,19 +464,12 @@ RECENT LOG:
 ${logSummary}`;
 
   try{
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${cfg.geminiKey}`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": cfg.anthropicKey,
-        "anthropic-version": "2023-06-01",
-        "anthropic-dangerous-direct-browser-access": "true"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 1000,
-        system: systemPrompt,
-        messages: chatHistory
+        system_instruction: { parts: [{ text: systemPrompt }] },
+        contents: chatHistory
       })
     });
     const data = await response.json();
@@ -485,10 +478,9 @@ ${logSummary}`;
       pushMsg('ev', 'API error: ' + data.error.message);
       return;
     }
-    const textBlocks = (data.content || []).filter(b=>b.type==='text').map(b=>b.text).join('\n');
-    const reply = textBlocks || "Channel's quiet — no response came through. Try again.";
+    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Channel's quiet — no response came through. Try again.";
     pushMsg('ev', reply);
-    chatHistory.push({role:'assistant', content: reply});
+    chatHistory.push({role:'model', parts:[{text: reply}]});
   }catch(e){
     document.getElementById('typingIndicator')?.remove();
     pushMsg('ev', 'Connection error reaching the advisory channel.');
