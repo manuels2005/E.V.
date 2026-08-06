@@ -1,5 +1,5 @@
-const CACHE = 'ev-tracker-v1';
-const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
+const CACHE = 'ev-tracker-v2';
+const ASSETS = ['./manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
@@ -14,11 +14,15 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Network-first for API calls (Supabase, Anthropic), cache-first for app shell
-  if (e.request.url.includes('supabase.co') || e.request.url.includes('generativelanguage.googleapis.com')) {
-    return; // let these hit the network directly, don't cache
-  }
+  // Network-first for everything: always get the latest, fall back to cache only if offline.
+  // (index.html and app JS are deliberately NOT precached, so future edits show up immediately.)
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
+    fetch(e.request)
+      .then(res => {
+        const resClone = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, resClone));
+        return res;
+      })
+      .catch(() => caches.match(e.request))
   );
 });
