@@ -97,6 +97,8 @@
   .task.done label{ color: var(--text-dim); text-decoration: line-through; }
   .task label{ cursor:pointer; line-height:1.4; }
   .task .tag{ font-size:10px; color:var(--amber); border:1px solid var(--amber); padding:0 4px; margin-left:6px; letter-spacing:1px; white-space:nowrap; }
+  .task .del{ margin-left:auto; color:var(--text-dim); cursor:pointer; font-size:11px; flex:none; }
+  .task .del:hover{ color:var(--red); }
 
   .mission-name{ font-family:'Share Tech Mono'; font-size:18px; color:var(--teal); text-shadow:var(--glow); margin-bottom:4px; }
   .mission-sub{ font-size:12px; color:var(--text-dim); margin-bottom:14px; letter-spacing:.5px;}
@@ -120,6 +122,12 @@
   .log-entry .del{ margin-left:auto; color:var(--text-dim); cursor:pointer; font-size:11px;}
   .log-entry .del:hover{ color:var(--red); }
   .empty-note{ color:var(--text-dim); font-size:12px; font-style:italic; }
+
+  .add-task-row{ display:flex; gap:8px; margin-bottom:10px; }
+  .add-task-row input{ flex:1; background: var(--panel-2); border:1px solid var(--line); color:var(--text); font-family:'JetBrains Mono'; font-size:12px; padding:7px 9px; outline:none; }
+  .add-task-row input:focus{ border-color: var(--teal-dim); }
+  .add-task-row button{ background: var(--teal-dim); color:#04120f; border:none; font-family:'Share Tech Mono'; letter-spacing:1px; padding:7px 12px; cursor:pointer; font-size:11px; }
+  .add-task-row button:hover{ background:var(--teal); }
 
   .ai-panel{ grid-column: 1 / -1; }
   .chat-window{ max-height: 260px; overflow-y:auto; padding: 4px 4px 10px; margin-bottom:10px; display:flex; flex-direction:column; gap:10px; }
@@ -180,6 +188,10 @@
   <div class="grid">
     <div class="panel">
       <div class="panel-title">OBJECTIVES <span class="dot"></span></div>
+      <div class="add-task-row">
+        <input id="newTaskInput" type="text" placeholder="Add an objective..." onkeydown="if(event.key==='Enter')addTaskManual()"/>
+        <button onclick="addTaskManual()">ADD</button>
+      </div>
       <div id="taskList"></div>
     </div>
 
@@ -335,8 +347,8 @@ function computeProgress(){
   const py = state.tasks.find(t=>t.id==='t1');
   const sql = state.tasks.find(t=>t.id==='t2');
   const resTasks = state.tasks.filter(t=>t.tag==='RESUME');
-  const pyPct = py.done ? 100 : 0;
-  const sqlPct = sql.done ? 100 : 0;
+  const pyPct = py && py.done ? 100 : 0;
+  const sqlPct = sql && sql.done ? 100 : 0;
   const resDone = resTasks.filter(t=>t.done).length;
   const resPct = resTasks.length ? Math.round((resDone/resTasks.length)*100) : 0;
   const overall = Math.round((pyPct+sqlPct+resPct)/3);
@@ -351,7 +363,8 @@ function render(){
     row.className = 'task' + (t.done ? ' done' : '');
     row.innerHTML = `<input type="checkbox" ${t.done?'checked':''} onchange="toggleTask('${t.id}')">
       <label onclick="toggleTask('${t.id}')">${t.label}</label>
-      <span class="tag">${t.tag}</span>`;
+      <span class="tag">${t.tag}</span>
+      <span class="del" onclick="removeTaskManual('${t.id}')">✕</span>`;
     list.appendChild(row);
   });
 
@@ -385,6 +398,24 @@ function render(){
 function toggleTask(id){
   const t = state.tasks.find(x=>x.id===id);
   t.done = !t.done;
+  save(); render();
+}
+
+function genTaskId(){
+  return 't' + Date.now() + Math.floor(Math.random()*100);
+}
+
+function addTaskManual(){
+  const input = document.getElementById('newTaskInput');
+  const label = input.value.trim();
+  if(!label) return;
+  state.tasks.push({ id: genTaskId(), label, done:false, tag:'MANUAL' });
+  input.value = '';
+  save(); render();
+}
+
+function removeTaskManual(id){
+  state.tasks = state.tasks.filter(t=>t.id!==id);
   save(); render();
 }
 
@@ -436,10 +467,33 @@ const TOOL_DECLARATIONS = [
     parameters: {
       type: "object",
       properties: {
-        task_id: { type: "string", description: "The task id, one of: t1, t2, t3, t4, t5 — see OBJECTIVES list for which id maps to which task." },
+        task_id: { type: "string", description: "The task id — see OBJECTIVES list for which id maps to which task." },
         done: { type: "boolean", description: "true to mark complete, false to mark incomplete" }
       },
       required: ["task_id", "done"]
+    }
+  },
+  {
+    name: "add_task",
+    description: "Add a brand new objective/task to the user's tracker. Use this whenever the user asks to add, create, or track a new task or objective.",
+    parameters: {
+      type: "object",
+      properties: {
+        label: { type: "string", description: "The task text, concise" },
+        tag: { type: "string", description: "Short category tag, e.g. PYTHON, SQL, RESUME, PREP, or MANUAL if unclear" }
+      },
+      required: ["label"]
+    }
+  },
+  {
+    name: "remove_task",
+    description: "Permanently remove an objective/task from the user's tracker. Use this whenever the user asks to delete, remove, or drop a task.",
+    parameters: {
+      type: "object",
+      properties: {
+        task_id: { type: "string", description: "The task id to remove — see OBJECTIVES list for which id maps to which task." }
+      },
+      required: ["task_id"]
     }
   },
   {
@@ -464,6 +518,21 @@ const toolFunctions = {
     save(); render();
     return { success:true, task: t.label, done: t.done };
   },
+  add_task(args){
+    if(!args.label) return { success:false, error:'Missing label' };
+    const t = { id: genTaskId(), label: args.label, done:false, tag: args.tag || 'MANUAL' };
+    state.tasks.push(t);
+    save(); render();
+    return { success:true, task_id: t.id, label: t.label };
+  },
+  remove_task(args){
+    const exists = state.tasks.some(t => t.id === args.task_id);
+    if(!exists) return { success:false, error:`No task with id ${args.task_id}` };
+    const removed = state.tasks.find(t => t.id === args.task_id);
+    state.tasks = state.tasks.filter(t => t.id !== args.task_id);
+    save(); render();
+    return { success:true, removed: removed.label };
+  },
   add_log_entry(args){
     const entry = { id:'l'+Date.now(), text: args.text, time: new Date().toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) };
     state.logs.push(entry);
@@ -478,11 +547,13 @@ function buildSystemPrompt(){
   const logSummary = state.logs.slice(-8).map(l=>`${l.time}: ${l.text}`).join('\n') || 'No logs yet.';
   return `You are E.V., a sharp, quick-witted advisory AI embedded in a personal status tracker for a UIUC Finance student (Manuel) preparing for a credit modeling internship at Synchrony Financial's Emerging Technology Center (ETC). Talk like a genuinely smart, capable person who's in his corner — direct, a little dry-witted, warm underneath. Do NOT use bracketed system-diagnostic voice like "[SCANNING...]" — that's a bit, not a personality. Keep replies brief unless asked for more.
 
-You have real tools — update_task and add_log_entry actually change Manuel's data, they are not roleplay. When he asks you to check something off or log something, CALL THE TOOL. Never claim you saved or logged something unless you actually called the matching tool.
+You have real tools — update_task, add_task, remove_task, and add_log_entry actually change Manuel's data, they are not roleplay. When he asks you to check something off, add a new objective, delete one, or log something, CALL THE TOOL. Never claim you saved, added, removed, or logged something unless you actually called the matching tool.
+
+You also have access to live web search — use it whenever a question depends on current information (news, prices, recent events, anything after your training cutoff) rather than guessing or relying on stale knowledge.
 
 READINESS: Python ${p.pyPct}%, SQL ${p.sqlPct}%, Resume ${p.resPct}%, Overall ${p.overall}%
 
-OBJECTIVES (use the id field with update_task):
+OBJECTIVES (use the id field with update_task / remove_task):
 ${taskSummary}
 
 RECENT LOG:
@@ -496,7 +567,10 @@ async function callGemini(contents){
     body: JSON.stringify({
       system_instruction: { parts: [{ text: buildSystemPrompt() }] },
       contents: contents,
-      tools: [{ function_declarations: TOOL_DECLARATIONS }]
+      tools: [
+        { function_declarations: TOOL_DECLARATIONS },
+        { google_search: {} }
+      ]
     })
   });
   return response.json();
@@ -565,7 +639,7 @@ async function sendChat(){
 // ---------- INIT ----------
 initSupabase();
 render();
-pushMsg('ev', "Tracker's online and I've actually got my hands on your data now — not just talking about it. Tell me what to check off or log, and watch it happen. What's the status?");
+pushMsg('ev', "Tracker's online — hands on your data, eyes on the web. Add, check off, remove, or log something, and watch it happen. What's the status?");
 
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
