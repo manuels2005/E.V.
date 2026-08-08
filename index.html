@@ -428,6 +428,80 @@ function pushMsg(role, text){
   chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
+// ---- Tool declarations: the real capabilities E.V. can invoke ----
+const TOOL_DECLARATIONS = [
+  {
+    name: "update_task",
+    description: "Mark one of the user's tracker objectives complete or incomplete. Use this whenever the user says they finished, completed, or want to un-check an objective.",
+    parameters: {
+      type: "object",
+      properties: {
+        task_id: { type: "string", description: "The task id, one of: t1, t2, t3, t4, t5 — see OBJECTIVES list for which id maps to which task." },
+        done: { type: "boolean", description: "true to mark complete, false to mark incomplete" }
+      },
+      required: ["task_id", "done"]
+    }
+  },
+  {
+    name: "add_log_entry",
+    description: "Add a freeform timestamped entry to the user's activity log. Use this whenever the user tells you something they did or want recorded — macros, workouts, study sessions, wins, anything.",
+    parameters: {
+      type: "object",
+      properties: {
+        text: { type: "string", description: "The log entry text, written concisely in the user's voice" }
+      },
+      required: ["text"]
+    }
+  }
+];
+
+// ---- Local implementations: what actually happens when a tool is called ----
+const toolFunctions = {
+  update_task(args){
+    const t = state.tasks.find(t => t.id === args.task_id);
+    if(!t) return { success:false, error:`No task with id ${args.task_id}` };
+    t.done = !!args.done;
+    save(); render();
+    return { success:true, task: t.label, done: t.done };
+  },
+  add_log_entry(args){
+    const entry = { id:'l'+Date.now(), text: args.text, time: new Date().toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) };
+    state.logs.push(entry);
+    save(); render();
+    return { success:true, logged: args.text };
+  }
+};
+
+function buildSystemPrompt(){
+  const p = computeProgress();
+  const taskSummary = state.tasks.map(t=>`- id:${t.id} [${t.done?'x':' '}] ${t.label} (${t.tag})`).join('\n');
+  const logSummary = state.logs.slice(-8).map(l=>`${l.time}: ${l.text}`).join('\n') || 'No logs yet.';
+  return `You are E.V., a sharp, quick-witted advisory AI embedded in a personal status tracker for a UIUC Finance student (Manuel) preparing for a credit modeling internship at Synchrony Financial's Emerging Technology Center (ETC). Talk like a genuinely smart, capable person who's in his corner — direct, a little dry-witted, warm underneath. Do NOT use bracketed system-diagnostic voice like "[SCANNING...]" — that's a bit, not a personality. Keep replies brief unless asked for more.
+
+You have real tools — update_task and add_log_entry actually change Manuel's data, they are not roleplay. When he asks you to check something off or log something, CALL THE TOOL. Never claim you saved or logged something unless you actually called the matching tool.
+
+READINESS: Python ${p.pyPct}%, SQL ${p.sqlPct}%, Resume ${p.resPct}%, Overall ${p.overall}%
+
+OBJECTIVES (use the id field with update_task):
+${taskSummary}
+
+RECENT LOG:
+${logSummary}`;
+}
+
+async function callGemini(contents){
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${cfg.geminiKey}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      system_instruction: { parts: [{ text: buildSystemPrompt() }] },
+      contents: contents,
+      tools: [{ function_declarations: TOOL_DECLARATIONS }]
+    })
+  });
+  return response.json();
+}
+
 async function sendChat(){
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
@@ -449,36 +523,36 @@ async function sendChat(){
   chatWindow.appendChild(typing);
   chatWindow.scrollTop = chatWindow.scrollHeight;
 
-  const p = computeProgress();
-  const taskSummary = state.tasks.map(t=>`- [${t.done?'x':' '}] ${t.label} (${t.tag})`).join('\n');
-  const logSummary = state.logs.slice(-8).map(l=>`${l.time}: ${l.text}`).join('\n') || 'No logs yet.';
-
-  const systemPrompt = `You are E.V., a sharp, no-nonsense HUD-style advisory AI embedded in a personal status tracker for a UIUC Finance student (Manuel) preparing for a credit modeling internship at Synchrony Financial's Emerging Technology Center (ETC). Speak briefly, directly, a little tactical/HUD in tone, but stay warm and genuinely helpful underneath. No long paragraphs unless asked.
-
-READINESS: Python ${p.pyPct}%, SQL ${p.sqlPct}%, Resume ${p.resPct}%, Overall ${p.overall}%
-
-OBJECTIVES:
-${taskSummary}
-
-RECENT LOG:
-${logSummary}`;
-
   try{
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${cfg.geminiKey}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        system_instruction: { parts: [{ text: systemPrompt }] },
-        contents: chatHistory
-      })
-    });
-    const data = await response.json();
+    let data = await callGemini(chatHistory);
+    let parts = data?.candidates?.[0]?.content?.parts || [];
+    let guard = 0;
+
+    // Tool-use loop: keep executing function calls and feeding results back
+    // until the model returns a plain text reply (or we hit a safety cap).
+    while(parts.some(p => p.functionCall) && guard < 4){
+      guard++;
+      chatHistory.push({ role:'model', parts: parts });
+      const responseParts = [];
+      for(const p of parts){
+        if(p.functionCall){
+          const fn = toolFunctions[p.functionCall.name];
+          const result = fn ? fn(p.functionCall.args || {}) : { success:false, error:'Unknown function' };
+          responseParts.push({ functionResponse: { name: p.functionCall.name, response: result } });
+        }
+      }
+      chatHistory.push({ role:'user', parts: responseParts });
+      data = await callGemini(chatHistory);
+      parts = data?.candidates?.[0]?.content?.parts || [];
+    }
+
     document.getElementById('typingIndicator')?.remove();
     if(data.error){
       pushMsg('ev', 'API error: ' + data.error.message);
       return;
     }
-    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Channel's quiet — no response came through. Try again.";
+    const textPart = parts.find(p => p.text);
+    const reply = textPart?.text || "Done.";
     pushMsg('ev', reply);
     chatHistory.push({role:'model', parts:[{text: reply}]});
   }catch(e){
@@ -491,7 +565,7 @@ ${logSummary}`;
 // ---------- INIT ----------
 initSupabase();
 render();
-pushMsg('ev', "Tracker online. Log your progress on the left, and I'll help you close the gaps on the Synchrony prep — Python, SQL, resume. What's the status?");
+pushMsg('ev', "Tracker's online and I've actually got my hands on your data now — not just talking about it. Tell me what to check off or log, and watch it happen. What's the status?");
 
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
