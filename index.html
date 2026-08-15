@@ -9,7 +9,6 @@
 <link rel="apple-touch-icon" href="./icon-192.png">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500;700&display=swap');
-
   :root{
     --bg: #050a0d;
     --panel: #081418;
@@ -24,10 +23,8 @@
     --text-dim: #5f8a86;
     --glow: 0 0 12px rgba(53,230,200,0.35);
   }
-
   *{ box-sizing: border-box; }
   html,body{ margin:0; padding:0; background:var(--bg); }
-
   body{
     font-family:'JetBrains Mono', monospace;
     color: var(--text);
@@ -40,7 +37,6 @@
       var(--bg);
     position:relative;
   }
-
   body::before{
     content:"";
     position:fixed; inset:0;
@@ -49,9 +45,7 @@
     );
     pointer-events:none; z-index: 50;
   }
-
   .frame{ max-width: 1180px; margin: 0 auto; }
-
   .header{
     display:flex; justify-content:space-between; align-items:center;
     border: 1px solid var(--line-bright);
@@ -67,71 +61,67 @@
   .header .clock b{ color: var(--teal); font-size:13px; }
   .gear{ cursor:pointer; color:var(--text-dim); font-size:18px; border:1px solid var(--line); padding:6px 10px; background:var(--panel-2); }
   .gear:hover{ color:var(--teal); border-color:var(--teal-dim); }
-
-  .ring-wrap{ display:flex; align-items:center; gap:12px; }
   .ring{ position:relative; width:56px; height:56px; }
   .ring svg{ transform: rotate(-90deg); }
   .ring-label{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:var(--teal);}
-
   .grid{ display:grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 14px; margin-bottom: 14px; }
   @media(max-width:900px){ .grid{ grid-template-columns: 1fr; } }
-
   .panel{ border: 1px solid var(--line); background: var(--panel); position: relative; padding: 14px 16px 16px; }
   .panel::before, .panel::after{ content:""; position:absolute; width:10px; height:10px; border: 1px solid var(--teal-dim); }
   .panel::before{ top:-1px; left:-1px; border-right:none; border-bottom:none; }
   .panel::after{ bottom:-1px; right:-1px; border-left:none; border-top:none; }
-
   .panel-title{
     font-family:'Share Tech Mono', monospace; font-size: 12px; letter-spacing: 3px; color: var(--amber);
     border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 12px;
-    display:flex; justify-content:space-between; align-items:center;
+    display:flex; justify-content:space-between; align-items:center; gap:8px;
   }
-  .panel-title .dot{ width:6px; height:6px; border-radius:50%; background:var(--teal); box-shadow:0 0 6px var(--teal); animation: blink 2s infinite; }
+  .panel-title .dot{ width:6px; height:6px; border-radius:50%; background:var(--teal); box-shadow:0 0 6px var(--teal); animation: blink 2s infinite; flex:none; }
   @keyframes blink{ 0%,100%{opacity:1} 50%{opacity:.25} }
-
   .task{ display:flex; align-items:flex-start; gap:10px; padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: 13px; }
   .task:last-child{ border-bottom:none; }
   .task input[type=checkbox]{ appearance:none; width:15px; height:15px; margin-top:2px; border:1px solid var(--teal-dim); background:transparent; cursor:pointer; flex:none; position:relative; }
   .task input[type=checkbox]:checked{ background:var(--teal); box-shadow:var(--glow); }
-  .task input[type=checkbox]:checked::after{ content:"✓"; position:absolute; top:-3px; left:2px; font-size:11px; color:#04120f; font-weight:700; }
+  .task input[type=checkbox]:checked::after{ content:"\2713"; position:absolute; top:-3px; left:2px; font-size:11px; color:#04120f; font-weight:700; }
   .task.done label{ color: var(--text-dim); text-decoration: line-through; }
   .task label{ cursor:pointer; line-height:1.4; }
-  .task .tag{ font-size:10px; color:var(--amber); border:1px solid var(--amber); padding:0 4px; margin-left:6px; letter-spacing:1px; white-space:nowrap; }
-  .task .del{ margin-left:auto; color:var(--text-dim); cursor:pointer; font-size:11px; flex:none; }
-  .task .del:hover{ color:var(--red); }
-
+  .tag{ font-size:10px; color:var(--amber); border:1px solid var(--amber); padding:0 4px; letter-spacing:1px; white-space:nowrap; flex:none; }
+  .task .tag{ margin-left:6px; }
+  .del{ margin-left:auto; color:var(--text-dim); cursor:pointer; font-size:11px; flex:none; padding-left:8px; }
+  .del:hover{ color:var(--red); }
+  /* editable fields */
+  .edit{ outline:none; border-bottom:1px dashed transparent; cursor:text; }
+  .edit:hover{ border-bottom-color: var(--line-bright); }
+  .edit:focus{ border-bottom-color: var(--teal); background: rgba(53,230,200,0.05); }
+  .edit:empty::before{ content: attr(data-ph); color: var(--text-dim); opacity:.7; font-style:italic; }
   .mission-name{ font-family:'Share Tech Mono'; font-size:18px; color:var(--teal); text-shadow:var(--glow); margin-bottom:4px; }
   .mission-sub{ font-size:12px; color:var(--text-dim); margin-bottom:14px; letter-spacing:.5px;}
   .bar-row{ margin-bottom: 10px; }
-  .bar-row .label-row{ display:flex; justify-content:space-between; font-size:11px; color:var(--text-dim); margin-bottom:4px; letter-spacing:1px; }
+  .bar-row .label-row{ display:flex; justify-content:space-between; font-size:11px; color:var(--text-dim); margin-bottom:4px; letter-spacing:1px; gap:10px; }
   .bar-track{ height:8px; background:var(--panel-2); border:1px solid var(--line); position:relative; overflow:hidden; }
   .bar-fill{ height:100%; background: linear-gradient(90deg, var(--teal-dim), var(--teal)); box-shadow: var(--glow); transition: width .5s ease; }
-
   .next-up{ margin-top:16px; padding:10px 12px; border-left:2px solid var(--amber); background:rgba(255,154,61,0.06); font-size:12.5px; }
   .next-up b{ color:var(--amber); letter-spacing:1px; }
-
+  .metric-label{ font-size:11px; color:var(--text-dim); letter-spacing:1px; }
+  .metric-value{ font-family:'Share Tech Mono'; font-size:26px; color:var(--teal); text-shadow:var(--glow); margin:2px 0 14px; }
   .log-input-row{ display:flex; gap:8px; margin-bottom:12px; }
   .log-input-row input{ flex:1; background: var(--panel-2); border:1px solid var(--line); color:var(--text); font-family:'JetBrains Mono'; font-size:13px; padding:8px 10px; outline:none; }
   .log-input-row input:focus{ border-color: var(--teal-dim); box-shadow: 0 0 0 1px var(--teal-dim); }
   .log-input-row button, .btn{ background: var(--teal-dim); color:#04120f; border:none; font-family:'Share Tech Mono'; letter-spacing:1px; padding:8px 14px; cursor:pointer; font-size:12px; transition:.15s; }
   .log-input-row button:hover, .btn:hover{ background:var(--teal); box-shadow:var(--glow); }
-
   .log-feed{ max-height: 190px; overflow-y:auto; font-size:12.5px; }
   .log-entry{ padding:6px 0; border-bottom: 1px dashed var(--line); display:flex; gap:8px;}
   .log-entry .ts{ color:var(--text-dim); font-size:10.5px; white-space:nowrap; margin-top:1px;}
-  .log-entry .del{ margin-left:auto; color:var(--text-dim); cursor:pointer; font-size:11px;}
-  .log-entry .del:hover{ color:var(--red); }
-  .empty-note{ color:var(--text-dim); font-size:12px; font-style:italic; }
-
-  .add-task-row{ display:flex; gap:8px; margin-bottom:10px; }
-  .add-task-row input{ flex:1; background: var(--panel-2); border:1px solid var(--line); color:var(--text); font-family:'JetBrains Mono'; font-size:12px; padding:7px 9px; outline:none; }
-  .add-task-row input:focus{ border-color: var(--teal-dim); }
-  .add-task-row button{ background: var(--teal-dim); color:#04120f; border:none; font-family:'Share Tech Mono'; letter-spacing:1px; padding:7px 12px; cursor:pointer; font-size:11px; }
-  .add-task-row button:hover{ background:var(--teal); }
-
+  .empty-note{ color:var(--text-dim); font-size:12px; font-style:italic; line-height:1.6; }
+  .add-row{ display:flex; gap:6px; margin-bottom:10px; }
+  .add-row input{ background: var(--panel-2); border:1px solid var(--line); color:var(--text); font-family:'JetBrains Mono'; font-size:12px; padding:7px 9px; outline:none; min-width:0; }
+  .add-row input.grow{ flex:1; }
+  .add-row input.tagin{ width:74px; text-transform:uppercase; }
+  .add-row input:focus{ border-color: var(--teal-dim); }
+  .add-row button{ background: var(--teal-dim); color:#04120f; border:none; font-family:'Share Tech Mono'; letter-spacing:1px; padding:7px 12px; cursor:pointer; font-size:11px; flex:none; }
+  .add-row button:hover{ background:var(--teal); }
   .ai-panel{ grid-column: 1 / -1; }
   .chat-window{ max-height: 260px; overflow-y:auto; padding: 4px 4px 10px; margin-bottom:10px; display:flex; flex-direction:column; gap:10px; }
-  .msg{ font-size:13px; line-height:1.5; max-width:80%; padding:9px 12px; }
+  .msg{ font-size:13px; line-height:1.5; max-width:80%; padding:9px 12px; white-space:pre-wrap; }
   .msg.user{ align-self:flex-end; background: var(--panel-2); border:1px solid var(--line); color:var(--text); }
   .msg.ev{ align-self:flex-start; background: rgba(53,230,200,0.06); border:1px solid var(--line-bright); color:var(--text); }
   .msg.ev .who{ color:var(--teal); font-family:'Share Tech Mono'; font-size:10px; letter-spacing:2px; display:block; margin-bottom:4px; }
@@ -139,33 +129,31 @@
   .chat-input-row input{ flex:1; background:var(--panel-2); border:1px solid var(--line); color:var(--text); font-family:'JetBrains Mono'; padding:10px 12px; outline:none; font-size:13px;}
   .chat-input-row input:focus{ border-color:var(--teal-dim); }
   .typing{ color:var(--text-dim); font-size:12px; font-style:italic; }
-
   ::-webkit-scrollbar{ width:6px; }
   ::-webkit-scrollbar-thumb{ background: var(--line-bright); }
   ::-webkit-scrollbar-track{ background: transparent; }
-
   .footer-note{ text-align:center; font-size:10.5px; color:var(--text-dim); letter-spacing:1px; margin-top:6px; }
-
-  /* SETTINGS MODAL */
-  .modal-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,0.7); display:none; align-items:center; justify-content:center; z-index:100; padding:20px; }
+  .modal-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,0.78); display:none; align-items:center; justify-content:center; z-index:100; padding:20px; overflow-y:auto; }
   .modal-backdrop.show{ display:flex; }
-  .modal{ background: var(--panel); border:1px solid var(--line-bright); max-width: 460px; width:100%; padding:20px; }
+  .modal{ background: var(--panel); border:1px solid var(--line-bright); max-width: 480px; width:100%; padding:20px; margin:auto; }
   .modal h3{ font-family:'Share Tech Mono'; color:var(--teal); letter-spacing:2px; font-size:14px; margin:0 0 4px; }
   .modal p{ font-size:12px; color:var(--text-dim); margin:0 0 14px; line-height:1.5; }
   .modal label{ font-size:11px; color:var(--text-dim); letter-spacing:1px; display:block; margin:12px 0 4px; }
   .modal input{ width:100%; background:var(--panel-2); border:1px solid var(--line); color:var(--text); font-family:'JetBrains Mono'; padding:8px 10px; outline:none; font-size:12px; }
   .modal input:focus{ border-color:var(--teal-dim); }
-  .modal-actions{ display:flex; gap:8px; margin-top:18px; justify-content:flex-end; }
+  .modal .sect{ border-top:1px solid var(--line); margin-top:18px; padding-top:6px; }
+  .modal .sect-title{ font-family:'Share Tech Mono'; font-size:11px; letter-spacing:2px; color:var(--amber); margin-top:10px; }
+  .modal-actions{ display:flex; gap:8px; margin-top:18px; justify-content:flex-end; flex-wrap:wrap; }
   .modal-actions button{ font-family:'Share Tech Mono'; font-size:11px; letter-spacing:1px; padding:8px 14px; cursor:pointer; border:1px solid var(--line); background:var(--panel-2); color:var(--text-dim); }
   .modal-actions button.primary{ background:var(--teal-dim); color:#04120f; border-color:var(--teal-dim); }
-  .sync-status{ font-size:10.5px; color:var(--text-dim); margin-top:8px; }
+  .modal-actions button.danger{ color:var(--red); border-color:var(--red); margin-right:auto; }
+  .sync-status{ font-size:10.5px; color:var(--text-dim); margin-top:8px; line-height:1.5; }
   .sync-status.ok{ color: var(--teal); }
   .sync-status.err{ color: var(--red); }
 </style>
 </head>
 <body>
 <div class="frame">
-
   <div class="header">
     <div>
       <div class="brand">E.V. <span>EMULATED VECTOR // PERSONAL STATUS TRACKER</span></div>
@@ -181,15 +169,16 @@
         </svg>
         <div class="ring-label" id="ringLabel">0%</div>
       </div>
-      <div class="gear" onclick="openSettings()">⚙</div>
+      <div class="gear" onclick="openSettings()" title="Settings">&#9881;</div>
     </div>
   </div>
 
   <div class="grid">
     <div class="panel">
       <div class="panel-title">OBJECTIVES <span class="dot"></span></div>
-      <div class="add-task-row">
-        <input id="newTaskInput" type="text" placeholder="Add an objective..." onkeydown="if(event.key==='Enter')addTaskManual()"/>
+      <div class="add-row">
+        <input id="newTaskInput" class="grow" type="text" placeholder="Add an objective..." onkeydown="if(event.key==='Enter')addTaskManual()"/>
+        <input id="newTaskTag" class="tagin" type="text" placeholder="TAG" maxlength="10" onkeydown="if(event.key==='Enter')addTaskManual()"/>
         <button onclick="addTaskManual()">ADD</button>
       </div>
       <div id="taskList"></div>
@@ -197,23 +186,21 @@
 
     <div class="panel">
       <div class="panel-title">ACTIVE MISSION <span class="dot"></span></div>
-      <div class="mission-name">FALL 2026 PREP</div>
-      <div class="mission-sub">Finance Internship</div>
-      <div class="bar-row"><div class="label-row"><span>PYTHON APPLIED</span><span id="pyPct">0%</span></div><div class="bar-track"><div class="bar-fill" id="pyBar" style="width:0%"></div></div></div>
-      <div class="bar-row"><div class="label-row"><span>SQL</span><span id="sqlPct">0%</span></div><div class="bar-track"><div class="bar-fill" id="sqlBar" style="width:0%"></div></div></div>
-      <div class="bar-row"><div class="label-row"><span>RESUME</span><span id="resPct">0%</span></div><div class="bar-track"><div class="bar-fill" id="resBar" style="width:0%"></div></div></div>
-      <div class="next-up"><b>NEXT UP:</b> Alumni informational call — Synchrony ETC</div>
+      <div class="mission-name edit" contenteditable="true" data-bind="mission.name" data-ph="USER'S MAIN OBJECTIVE"></div>
+      <div class="mission-sub edit" contenteditable="true" data-bind="mission.sub" data-ph="Add a short description of the goal"></div>
+      <div id="trackBars"></div>
+      <div class="next-up"><b>NEXT UP:</b> <span class="edit" contenteditable="true" data-bind="mission.next" data-ph="What's the very next action?"></span></div>
     </div>
 
     <div class="panel">
       <div class="panel-title">PROFILE <span class="dot"></span></div>
-      <div class="task"><label>GPA</label></div>
-      <div style="font-family:'Share Tech Mono'; font-size:26px; color:var(--teal); text-shadow:var(--glow); margin:-6px 0 14px;">3.94</div>
-      <div class="task"><label>UIUC — Finance / Business Analytics minor</label></div>
-      <div class="task"><label>Capital planning model → reframe as risk-based modeling</label></div>
-      <div class="task"><label>Add back: Statistics, Oakton College</label></div>
-      <div class="task"><label>Gap: limited applied Python</label> <span class="tag">FIX</span></div>
-      <div class="task"><label>Gap: no SQL on resume</label> <span class="tag">FIX</span></div>
+      <div class="metric-label edit" contenteditable="true" data-bind="profile.metricLabel" data-ph="KEY METRIC"></div>
+      <div class="metric-value edit" contenteditable="true" data-bind="profile.metricValue" data-ph="--"></div>
+      <div class="add-row">
+        <input id="newProfileInput" class="grow" type="text" placeholder="Add a profile line..." onkeydown="if(event.key==='Enter')addProfileLine()"/>
+        <button onclick="addProfileLine()">ADD</button>
+      </div>
+      <div id="profileList"></div>
     </div>
   </div>
 
@@ -221,7 +208,7 @@
     <div class="panel">
       <div class="panel-title">LOG ENTRY <span class="dot"></span></div>
       <div class="log-input-row">
-        <input id="logInput" type="text" placeholder="Log an update... e.g. 'Finished Kaggle credit scoring notebook'" />
+        <input id="logInput" type="text" placeholder="Log an update... e.g. 'Finished the first project notebook'" onkeydown="if(event.key==='Enter')addLog()"/>
         <button onclick="addLog()">LOG</button>
       </div>
       <div class="log-feed" id="logFeed"></div>
@@ -230,53 +217,62 @@
 
   <div class="grid" style="grid-template-columns:1fr;">
     <div class="panel ai-panel">
-      <div class="panel-title">E.V. — ADVISORY CHANNEL <span class="dot"></span></div>
+      <div class="panel-title">E.V. &mdash; ADVISORY CHANNEL <span class="dot"></span></div>
       <div class="chat-window" id="chatWindow"></div>
       <div class="chat-input-row">
-        <input id="chatInput" type="text" placeholder="Ask E.V. anything about your prep, tasks, or strategy..." onkeydown="if(event.key==='Enter')sendChat()"/>
+        <input id="chatInput" type="text" placeholder="Ask E.V. anything about your goals, tasks, or strategy..." onkeydown="if(event.key==='Enter')sendChat()"/>
         <button class="btn" onclick="sendChat()">SEND</button>
       </div>
     </div>
   </div>
 
-  <div class="footer-note">E.V. STATUS TRACKER v1.0 — installable PWA</div>
+  <div class="footer-note">E.V. STATUS TRACKER v2.0 &mdash; installable PWA</div>
 </div>
 
 <!-- SETTINGS MODAL -->
 <div class="modal-backdrop" id="settingsModal">
   <div class="modal">
     <h3>SYSTEM CONFIG</h3>
-    <p>Connect a Supabase project so this tracker syncs across every device. Same sync code + keys on each device = same data. Get your free project at supabase.com.</p>
+    <p>Everything in this tracker is yours to define. Objectives, mission, and profile are edited directly on the dashboard &mdash; click any field to type in it.</p>
 
+    <div class="sect-title">CROSS-DEVICE SYNC (OPTIONAL)</div>
+    <p style="margin-top:6px;">Connect a free Supabase project so this tracker syncs across every device. Same sync code + keys on each device = same data.</p>
     <label>SYNC CODE (pick anything, use it on all devices)</label>
-    <input id="cfgSyncCode" type="text" placeholder="e.g. manuel-ev-01">
-
+    <input id="cfgSyncCode" type="text" placeholder="e.g. my-tracker-01">
     <label>SUPABASE PROJECT URL</label>
     <input id="cfgSupaUrl" type="text" placeholder="https://xxxxx.supabase.co">
-
     <label>SUPABASE ANON PUBLIC KEY</label>
-    <input id="cfgSupaKey" type="text" placeholder="eyJhbGciOi...">
+    <input id="cfgSupaKey" type="password" placeholder="eyJhbGciOi...">
 
-    <label>GEMINI API KEY (for E.V. chat — optional)</label>
+    <div class="sect"></div>
+    <div class="sect-title">ADVISORY CHANNEL (OPTIONAL)</div>
+    <label>GEMINI API KEY &mdash; enables the E.V. chat</label>
     <input id="cfgGeminiKey" type="password" placeholder="AIza...">
 
     <div class="sync-status" id="syncStatusMsg"></div>
     <div class="modal-actions">
+      <button class="danger" onclick="resetTracker()">RESET TRACKER</button>
       <button onclick="closeSettings()">CANCEL</button>
-      <button class="primary" onclick="saveSettings()">SAVE & CONNECT</button>
+      <button class="primary" onclick="saveSettings()">SAVE &amp; CONNECT</button>
     </div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ---------- CONFIG / SETTINGS ----------
+// ============================================================
+//  E.V. STATUS TRACKER  —  generic, fully user-defined build
+//  No content is hardcoded to any person, school, or employer.
+// ============================================================
+
+// ---------- CONFIG ----------
 const CFG_KEY = 'ev-tracker-config';
+const STATE_KEY = 'ev-tracker-state-local';
 let cfg = JSON.parse(localStorage.getItem(CFG_KEY) || '{}');
 let supabaseClient = null;
 
 function initSupabase(){
-  if(cfg.supaUrl && cfg.supaKey){
+  if(cfg.supaUrl && cfg.supaKey && window.supabase){
     try{
       supabaseClient = window.supabase.createClient(cfg.supaUrl, cfg.supaKey);
       document.getElementById('syncState').textContent = 'CLOUD';
@@ -285,6 +281,7 @@ function initSupabase(){
       document.getElementById('syncState').textContent = 'LOCAL';
     }
   } else {
+    supabaseClient = null;
     document.getElementById('syncState').textContent = 'LOCAL';
   }
 }
@@ -295,15 +292,16 @@ function openSettings(){
   document.getElementById('cfgSupaKey').value = cfg.supaKey || '';
   document.getElementById('cfgGeminiKey').value = cfg.geminiKey || '';
   document.getElementById('syncStatusMsg').textContent = '';
+  document.getElementById('syncStatusMsg').className = 'sync-status';
   document.getElementById('settingsModal').classList.add('show');
 }
 function closeSettings(){ document.getElementById('settingsModal').classList.remove('show'); }
 
 async function saveSettings(){
-  cfg.syncCode = document.getElementById('cfgSyncCode').value.trim();
-  cfg.supaUrl = document.getElementById('cfgSupaUrl').value.trim();
-  cfg.supaKey = document.getElementById('cfgSupaKey').value.trim();
-  cfg.geminiKey = document.getElementById('cfgGeminiKey').value.trim();
+  cfg.syncCode   = document.getElementById('cfgSyncCode').value.trim();
+  cfg.supaUrl    = document.getElementById('cfgSupaUrl').value.trim();
+  cfg.supaKey    = document.getElementById('cfgSupaKey').value.trim();
+  cfg.geminiKey  = document.getElementById('cfgGeminiKey').value.trim();
   localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
   initSupabase();
 
@@ -311,76 +309,158 @@ async function saveSettings(){
   if(supabaseClient && cfg.syncCode){
     statusEl.textContent = 'Connecting...';
     statusEl.className = 'sync-status';
-    const { data, error } = await supabaseClient.from('ev_tracker').select('*').eq('sync_code', cfg.syncCode).maybeSingle();
-    if(error){
-      statusEl.textContent = 'Error: ' + error.message + ' (did you create the table? see instructions)';
+    try{
+      const { data, error } = await supabaseClient
+        .from('ev_tracker').select('*').eq('sync_code', cfg.syncCode).maybeSingle();
+      if(error){
+        statusEl.textContent = 'Error: ' + error.message + ' (is the ev_tracker table created?)';
+        statusEl.className = 'sync-status err';
+        return;
+      }
+      if(data && data.state){
+        state = migrate(data.state);
+      } else {
+        await supabaseClient.from('ev_tracker').insert({ sync_code: cfg.syncCode, state });
+      }
+      statusEl.textContent = 'Connected. Synced across every device using this code.';
+      statusEl.className = 'sync-status ok';
+      persistLocal();
+      render();
+    }catch(e){
+      statusEl.textContent = 'Connection failed: ' + e.message;
       statusEl.className = 'sync-status err';
       return;
     }
-    if(data){
-      state = data.state;
-    } else {
-      await supabaseClient.from('ev_tracker').insert({ sync_code: cfg.syncCode, state });
-    }
-    statusEl.textContent = 'Connected. Synced across devices with this code.';
+  } else {
+    statusEl.textContent = 'Saved locally.';
     statusEl.className = 'sync-status ok';
-    render();
   }
   setTimeout(closeSettings, 900);
 }
 
-// ---------- STATE ----------
-const defaultState = {
-  tasks: [
-    { id:'t1', label:'Start Kaggle credit-scoring project (Python)', done:false, tag:'PYTHON' },
-    { id:'t2', label:'Complete a short SQL course', done:false, tag:'SQL' },
-    { id:'t3', label:'Add Oakton Statistics course to resume', done:false, tag:'RESUME' },
-    { id:'t4', label:'Reframe capital planning project as risk modeling', done:false, tag:'RESUME' },
-    { id:'t5', label:'Prep questions for Synchrony ETC alumni call', done:false, tag:'PREP' },
-  ],
-  logs: [],
-};
-
-let state = JSON.parse(localStorage.getItem('ev-tracker-state-local') || 'null') || structuredClone(defaultState);
-
-function computeProgress(){
-  const py = state.tasks.find(t=>t.id==='t1');
-  const sql = state.tasks.find(t=>t.id==='t2');
-  const resTasks = state.tasks.filter(t=>t.tag==='RESUME');
-  const pyPct = py && py.done ? 100 : 0;
-  const sqlPct = sql && sql.done ? 100 : 0;
-  const resDone = resTasks.filter(t=>t.done).length;
-  const resPct = resTasks.length ? Math.round((resDone/resTasks.length)*100) : 0;
-  const overall = Math.round((pyPct+sqlPct+resPct)/3);
-  return {pyPct, sqlPct, resPct, overall};
+function resetTracker(){
+  state = structuredClone(defaultState);
+  chatHistory = [];
+  save(); render();
+  document.getElementById('chatWindow').innerHTML = '';
+  greet();
+  closeSettings();
 }
 
-function render(){
-  const list = document.getElementById('taskList');
-  list.innerHTML = '';
+// ---------- STATE ----------
+// Ships empty on purpose: whoever opens this gets a blank tracker of their own.
+const defaultState = {
+  mission: { name: '', sub: '', next: '' },
+  profile: { metricLabel: '', metricValue: '', lines: [] },
+  tasks: [],
+  logs: []
+};
+
+function migrate(raw){
+  const s = structuredClone(defaultState);
+  if(!raw || typeof raw !== 'object') return s;
+  s.mission = Object.assign(s.mission, raw.mission || {});
+  s.profile = Object.assign(s.profile, raw.profile || {});
+  s.profile.lines = Array.isArray(s.profile.lines) ? s.profile.lines : [];
+  s.tasks = Array.isArray(raw.tasks) ? raw.tasks : [];
+  s.logs  = Array.isArray(raw.logs)  ? raw.logs  : [];
+  return s;
+}
+
+let state = migrate(JSON.parse(localStorage.getItem(STATE_KEY) || 'null'));
+
+function esc(str){
+  return String(str == null ? '' : str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function uid(p){ return p + Date.now().toString(36) + Math.floor(Math.random()*1e4).toString(36); }
+
+// Progress is derived from whatever tags the user's own objectives carry.
+// No track is hardcoded — add a task tagged ANYTHING and a bar appears for it.
+function computeProgress(){
+  const map = new Map();
   state.tasks.forEach(t=>{
-    const row = document.createElement('div');
-    row.className = 'task' + (t.done ? ' done' : '');
-    row.innerHTML = `<input type="checkbox" ${t.done?'checked':''} onchange="toggleTask('${t.id}')">
-      <label onclick="toggleTask('${t.id}')">${t.label}</label>
-      <span class="tag">${t.tag}</span>
-      <span class="del" onclick="removeTaskManual('${t.id}')">✕</span>`;
-    list.appendChild(row);
+    const tag = (t.tag || 'GENERAL').toUpperCase();
+    if(!map.has(tag)) map.set(tag, { done:0, total:0 });
+    const e = map.get(tag);
+    e.total++; if(t.done) e.done++;
+  });
+  const tracks = [...map.entries()].map(([tag,v])=>({
+    tag, done:v.done, total:v.total, pct: Math.round((v.done/v.total)*100)
+  })).sort((a,b)=> b.total - a.total || a.tag.localeCompare(b.tag));
+  const total = state.tasks.length;
+  const done = state.tasks.filter(t=>t.done).length;
+  return { tracks, done, total, overall: total ? Math.round((done/total)*100) : 0 };
+}
+
+// ---------- RENDER ----------
+function render(){
+  // bound editable fields
+  document.querySelectorAll('[data-bind]').forEach(el=>{
+    if(document.activeElement === el) return; // don't clobber mid-typing
+    const [grp, key] = el.dataset.bind.split('.');
+    el.textContent = (state[grp] && state[grp][key]) || '';
   });
 
+  // objectives
+  const list = document.getElementById('taskList');
+  list.innerHTML = '';
+  if(state.tasks.length === 0){
+    list.innerHTML = '<div class="empty-note">No objectives yet. Add your first one above &mdash; tag it (PYTHON, SQL, RESUME, GYM, anything) and a progress track builds itself.</div>';
+  } else {
+    state.tasks.forEach(t=>{
+      const row = document.createElement('div');
+      row.className = 'task' + (t.done ? ' done' : '');
+      row.innerHTML =
+        '<input type="checkbox" ' + (t.done?'checked':'') + ' data-act="toggle" data-id="' + esc(t.id) + '">' +
+        '<label data-act="toggle" data-id="' + esc(t.id) + '">' + esc(t.label) + '</label>' +
+        '<span class="tag">' + esc(t.tag || 'GENERAL') + '</span>' +
+        '<span class="del" data-act="deltask" data-id="' + esc(t.id) + '">&#10005;</span>';
+      list.appendChild(row);
+    });
+  }
+
+  // dynamic progress tracks
   const p = computeProgress();
-  document.getElementById('pyBar').style.width = p.pyPct+'%';
-  document.getElementById('sqlBar').style.width = p.sqlPct+'%';
-  document.getElementById('resBar').style.width = p.resPct+'%';
-  document.getElementById('pyPct').textContent = p.pyPct+'%';
-  document.getElementById('sqlPct').textContent = p.sqlPct+'%';
-  document.getElementById('resPct').textContent = p.resPct+'%';
+  const bars = document.getElementById('trackBars');
+  bars.innerHTML = '';
+  if(p.tracks.length === 0){
+    bars.innerHTML = '<div class="empty-note">Progress tracks appear here automatically, one per objective tag.</div>';
+  } else {
+    p.tracks.slice(0,6).forEach(tr=>{
+      const row = document.createElement('div');
+      row.className = 'bar-row';
+      row.innerHTML =
+        '<div class="label-row"><span>' + esc(tr.tag) + '</span><span>' + tr.pct + '% &middot; ' + tr.done + '/' + tr.total + '</span></div>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:' + tr.pct + '%"></div></div>';
+      bars.appendChild(row);
+    });
+  }
 
-  const circumference = 144.5;
-  const offset = circumference - (p.overall/100)*circumference;
-  document.getElementById('ringProgress').style.strokeDashoffset = offset;
-  document.getElementById('ringLabel').textContent = p.overall+'%';
+  // ring
+  const C = 144.5;
+  document.getElementById('ringProgress').style.strokeDashoffset = C - (p.overall/100)*C;
+  document.getElementById('ringLabel').textContent = p.overall + '%';
 
+  // profile lines
+  const pl = document.getElementById('profileList');
+  pl.innerHTML = '';
+  if(state.profile.lines.length === 0){
+    pl.innerHTML = '<div class="empty-note">Add whatever matters to you here &mdash; program, focus area, strengths, or a gap you\'re closing.</div>';
+  } else {
+    state.profile.lines.forEach(l=>{
+      const row = document.createElement('div');
+      row.className = 'task';
+      row.innerHTML =
+        '<label style="cursor:default">' + esc(l.text) + '</label>' +
+        (l.flag ? '<span class="tag">' + esc(l.flag) + '</span>' : '') +
+        '<span class="del" data-act="delprofile" data-id="' + esc(l.id) + '">&#10005;</span>';
+      pl.appendChild(row);
+    });
+  }
+
+  // log feed
   const feed = document.getElementById('logFeed');
   feed.innerHTML = '';
   if(state.logs.length === 0){
@@ -389,169 +469,236 @@ function render(){
     [...state.logs].reverse().forEach(entry=>{
       const div = document.createElement('div');
       div.className = 'log-entry';
-      div.innerHTML = `<span class="ts">${entry.time}</span><span>${entry.text}</span><span class="del" onclick="deleteLog('${entry.id}')">✕</span>`;
+      div.innerHTML =
+        '<span class="ts">' + esc(entry.time) + '</span><span>' + esc(entry.text) + '</span>' +
+        '<span class="del" data-act="dellog" data-id="' + esc(entry.id) + '">&#10005;</span>';
       feed.appendChild(div);
     });
   }
 }
 
+// ---------- ACTIONS (delegated: no inline handlers on generated markup) ----------
+document.addEventListener('click', e=>{
+  const el = e.target.closest('[data-act]');
+  if(!el) return;
+  const id = el.dataset.id;
+  switch(el.dataset.act){
+    case 'toggle':      toggleTask(id); break;
+    case 'deltask':     removeTask(id); break;
+    case 'dellog':      deleteLog(id); break;
+    case 'delprofile':  removeProfileLine(id); break;
+  }
+});
+
+// inline editable fields -> state
+document.querySelectorAll('[data-bind]').forEach(el=>{
+  el.addEventListener('blur', ()=>{
+    const [grp, key] = el.dataset.bind.split('.');
+    state[grp][key] = el.textContent.trim();
+    save();
+  });
+  el.addEventListener('keydown', ev=>{
+    if(ev.key === 'Enter'){ ev.preventDefault(); el.blur(); }
+  });
+});
+
 function toggleTask(id){
   const t = state.tasks.find(x=>x.id===id);
+  if(!t) return;
   t.done = !t.done;
   save(); render();
 }
-
-function genTaskId(){
-  return 't' + Date.now() + Math.floor(Math.random()*100);
-}
-
 function addTaskManual(){
   const input = document.getElementById('newTaskInput');
+  const tagIn = document.getElementById('newTaskTag');
   const label = input.value.trim();
   if(!label) return;
-  state.tasks.push({ id: genTaskId(), label, done:false, tag:'MANUAL' });
-  input.value = '';
+  const tag = (tagIn.value.trim() || 'GENERAL').toUpperCase();
+  state.tasks.push({ id: uid('t'), label, done:false, tag });
+  input.value = ''; tagIn.value = '';
   save(); render();
+  input.focus();
 }
-
-function removeTaskManual(id){
+function removeTask(id){
   state.tasks = state.tasks.filter(t=>t.id!==id);
   save(); render();
 }
-
+function addProfileLine(){
+  const input = document.getElementById('newProfileInput');
+  const text = input.value.trim();
+  if(!text) return;
+  state.profile.lines.push({ id: uid('p'), text, flag:'' });
+  input.value = '';
+  save(); render();
+  input.focus();
+}
+function removeProfileLine(id){
+  state.profile.lines = state.profile.lines.filter(l=>l.id!==id);
+  save(); render();
+}
+function stamp(){
+  return new Date().toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+}
 function addLog(){
   const input = document.getElementById('logInput');
   const text = input.value.trim();
   if(!text) return;
-  state.logs.push({ id: 'l'+Date.now(), text, time: new Date().toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) });
+  state.logs.push({ id: uid('l'), text, time: stamp() });
   input.value = '';
   save(); render();
 }
-
 function deleteLog(id){
   state.logs = state.logs.filter(l=>l.id!==id);
   save(); render();
 }
 
+function persistLocal(){ localStorage.setItem(STATE_KEY, JSON.stringify(state)); }
 async function save(){
-  localStorage.setItem('ev-tracker-state-local', JSON.stringify(state));
+  persistLocal();
   if(supabaseClient && cfg.syncCode){
-    await supabaseClient.from('ev_tracker').update({ state, updated_at: new Date().toISOString() }).eq('sync_code', cfg.syncCode);
+    try{
+      await supabaseClient.from('ev_tracker')
+        .upsert({ sync_code: cfg.syncCode, state, updated_at: new Date().toISOString() }, { onConflict: 'sync_code' });
+    }catch(e){ console.warn('sync failed', e); }
   }
 }
 
 function tickClock(){
-  document.getElementById('dateLine').textContent = new Date().toLocaleString([], {weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+  document.getElementById('dateLine').textContent =
+    new Date().toLocaleString([], {weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
 }
-setInterval(tickClock, 1000*30);
+setInterval(tickClock, 30000);
 tickClock();
 
-// ---------- AI CHAT ----------
+// ---------- ADVISORY CHANNEL ----------
 const chatWindow = document.getElementById('chatWindow');
 let chatHistory = [];
 
 function pushMsg(role, text){
   const div = document.createElement('div');
-  div.className = 'msg ' + (role==='user' ? 'user':'ev');
-  if(role==='ev'){ div.innerHTML = `<span class="who">E.V.</span>${text}`; }
-  else{ div.textContent = text; }
+  div.className = 'msg ' + (role==='user' ? 'user' : 'ev');
+  if(role === 'ev'){ div.innerHTML = '<span class="who">E.V.</span>' + esc(text); }
+  else { div.textContent = text; }
   chatWindow.appendChild(div);
   chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-// ---- Tool declarations: the real capabilities E.V. can invoke ----
 const TOOL_DECLARATIONS = [
-  {
-    name: "update_task",
-    description: "Mark one of the user's tracker objectives complete or incomplete. Use this whenever the user says they finished, completed, or want to un-check an objective.",
-    parameters: {
-      type: "object",
-      properties: {
-        task_id: { type: "string", description: "The task id — see OBJECTIVES list for which id maps to which task." },
-        done: { type: "boolean", description: "true to mark complete, false to mark incomplete" }
-      },
-      required: ["task_id", "done"]
-    }
-  },
-  {
-    name: "add_task",
-    description: "Add a brand new objective/task to the user's tracker. Use this whenever the user asks to add, create, or track a new task or objective.",
-    parameters: {
-      type: "object",
-      properties: {
-        label: { type: "string", description: "The task text, concise" },
-        tag: { type: "string", description: "Short category tag, e.g. PYTHON, SQL, RESUME, PREP, or MANUAL if unclear" }
-      },
-      required: ["label"]
-    }
-  },
-  {
-    name: "remove_task",
-    description: "Permanently remove an objective/task from the user's tracker. Use this whenever the user asks to delete, remove, or drop a task.",
-    parameters: {
-      type: "object",
-      properties: {
-        task_id: { type: "string", description: "The task id to remove — see OBJECTIVES list for which id maps to which task." }
-      },
-      required: ["task_id"]
-    }
-  },
-  {
-    name: "add_log_entry",
-    description: "Add a freeform timestamped entry to the user's activity log. Use this whenever the user tells you something they did or want recorded — macros, workouts, study sessions, wins, anything.",
-    parameters: {
-      type: "object",
-      properties: {
-        text: { type: "string", description: "The log entry text, written concisely in the user's voice" }
-      },
-      required: ["text"]
-    }
-  }
+  { name:"update_task",
+    description:"Mark one of the user's objectives complete or incomplete. Use whenever the user says they finished something or wants to un-check it.",
+    parameters:{ type:"object", properties:{
+      task_id:{type:"string", description:"The task id — see OBJECTIVES list."},
+      done:{type:"boolean", description:"true to mark complete, false to mark incomplete"}
+    }, required:["task_id","done"] } },
+  { name:"add_task",
+    description:"Add a new objective to the tracker. Use whenever the user asks to add, create, or track something new.",
+    parameters:{ type:"object", properties:{
+      label:{type:"string", description:"The objective text, concise"},
+      tag:{type:"string", description:"Short uppercase category tag. Reuse a tag already in the user's list when it fits, since each tag becomes a progress track."}
+    }, required:["label"] } },
+  { name:"remove_task",
+    description:"Permanently remove an objective. Use whenever the user asks to delete or drop one.",
+    parameters:{ type:"object", properties:{
+      task_id:{type:"string", description:"The task id to remove — see OBJECTIVES list."}
+    }, required:["task_id"] } },
+  { name:"add_log_entry",
+    description:"Add a timestamped entry to the activity log. Use whenever the user tells you something they did or want recorded.",
+    parameters:{ type:"object", properties:{
+      text:{type:"string", description:"The log entry text, concise, in the user's voice"}
+    }, required:["text"] } },
+  { name:"set_mission",
+    description:"Set or update the ACTIVE MISSION panel — the user's headline goal, its one-line description, and the single next action.",
+    parameters:{ type:"object", properties:{
+      name:{type:"string", description:"Headline goal, short and punchy"},
+      sub:{type:"string", description:"One-line description of the goal"},
+      next:{type:"string", description:"The single next concrete action"}
+    } } },
+  { name:"update_profile",
+    description:"Update the PROFILE panel: the headline metric (its label and value) and/or add a profile line describing background, strengths, or a gap being closed.",
+    parameters:{ type:"object", properties:{
+      metric_label:{type:"string", description:"Label for the headline number, e.g. GPA, STREAK, SAVED"},
+      metric_value:{type:"string", description:"Value for the headline number"},
+      add_line:{type:"string", description:"A profile line to add"},
+      line_flag:{type:"string", description:"Optional short tag on that line, e.g. FIX or GOAL"}
+    } } }
 ];
 
-// ---- Local implementations: what actually happens when a tool is called ----
 const toolFunctions = {
-  update_task(args){
-    const t = state.tasks.find(t => t.id === args.task_id);
-    if(!t) return { success:false, error:`No task with id ${args.task_id}` };
-    t.done = !!args.done;
-    save(); render();
-    return { success:true, task: t.label, done: t.done };
+  update_task(a){
+    const t = state.tasks.find(t=>t.id===a.task_id);
+    if(!t) return { success:false, error:'No task with id ' + a.task_id };
+    t.done = !!a.done; save(); render();
+    return { success:true, task:t.label, done:t.done };
   },
-  add_task(args){
-    if(!args.label) return { success:false, error:'Missing label' };
-    const t = { id: genTaskId(), label: args.label, done:false, tag: args.tag || 'MANUAL' };
-    state.tasks.push(t);
-    save(); render();
-    return { success:true, task_id: t.id, label: t.label };
+  add_task(a){
+    if(!a.label) return { success:false, error:'Missing label' };
+    const t = { id: uid('t'), label:a.label, done:false, tag:(a.tag||'GENERAL').toUpperCase() };
+    state.tasks.push(t); save(); render();
+    return { success:true, task_id:t.id, label:t.label, tag:t.tag };
   },
-  remove_task(args){
-    const exists = state.tasks.some(t => t.id === args.task_id);
-    if(!exists) return { success:false, error:`No task with id ${args.task_id}` };
-    const removed = state.tasks.find(t => t.id === args.task_id);
-    state.tasks = state.tasks.filter(t => t.id !== args.task_id);
-    save(); render();
-    return { success:true, removed: removed.label };
+  remove_task(a){
+    const removed = state.tasks.find(t=>t.id===a.task_id);
+    if(!removed) return { success:false, error:'No task with id ' + a.task_id };
+    state.tasks = state.tasks.filter(t=>t.id!==a.task_id); save(); render();
+    return { success:true, removed:removed.label };
   },
-  add_log_entry(args){
-    const entry = { id:'l'+Date.now(), text: args.text, time: new Date().toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) };
-    state.logs.push(entry);
+  add_log_entry(a){
+    if(!a.text) return { success:false, error:'Missing text' };
+    state.logs.push({ id: uid('l'), text:a.text, time: stamp() });
     save(); render();
-    return { success:true, logged: args.text };
+    return { success:true, logged:a.text };
+  },
+  set_mission(a){
+    if(a.name != null) state.mission.name = a.name;
+    if(a.sub  != null) state.mission.sub  = a.sub;
+    if(a.next != null) state.mission.next = a.next;
+    save(); render();
+    return { success:true, mission: state.mission };
+  },
+  update_profile(a){
+    if(a.metric_label != null) state.profile.metricLabel = a.metric_label;
+    if(a.metric_value != null) state.profile.metricValue = a.metric_value;
+    if(a.add_line) state.profile.lines.push({ id: uid('p'), text:a.add_line, flag:(a.line_flag||'').toUpperCase() });
+    save(); render();
+    return { success:true, profile: state.profile };
   }
 };
 
 function buildSystemPrompt(){
   const p = computeProgress();
-  const taskSummary = state.tasks.map(t=>`- id:${t.id} [${t.done?'x':' '}] ${t.label} (${t.tag})`).join('\n');
-  const logSummary = state.logs.slice(-8).map(l=>`${l.time}: ${l.text}`).join('\n') || 'No logs yet.';
-  return `You are E.V., a sharp, quick-witted advisory AI embedded in a personal status tracker for a UIUC Finance student (Manuel) preparing for a credit modeling internship at Synchrony Financial's Emerging Technology Center (ETC). Talk like a genuinely smart, capable person who's in his corner — direct, a little dry-witted, warm underneath. Do NOT use bracketed system-diagnostic voice like "[SCANNING...]" — that's a bit, not a personality. Keep replies brief unless asked for more.
+  const tracks = p.tracks.length
+    ? p.tracks.map(t=>`${t.tag}: ${t.pct}% (${t.done}/${t.total})`).join(' | ')
+    : 'No tracks yet.';
+  const taskSummary = state.tasks.length
+    ? state.tasks.map(t=>`- id:${t.id} [${t.done?'x':' '}] ${t.label} (${t.tag})`).join('\n')
+    : 'No objectives set yet.';
+  const logSummary = state.logs.length
+    ? state.logs.slice(-8).map(l=>`${l.time}: ${l.text}`).join('\n')
+    : 'No logs yet.';
+  const profileSummary = [
+    state.profile.metricLabel || state.profile.metricValue
+      ? `${state.profile.metricLabel || 'Metric'}: ${state.profile.metricValue || '—'}` : null,
+    ...state.profile.lines.map(l=> '- ' + l.text + (l.flag ? ` [${l.flag}]` : ''))
+  ].filter(Boolean).join('\n') || 'Profile not filled in yet.';
 
-You have real tools — update_task, add_task, remove_task, and add_log_entry actually change Manuel's data, they are not roleplay. When he asks you to check something off, add a new objective, delete one, or log something, CALL THE TOOL. Never claim you saved, added, removed, or logged something unless you actually called the matching tool.
+  return `You are E.V., a sharp, quick-witted advisory AI embedded in the user's personal status tracker. Talk like a genuinely smart, capable person who's in their corner — direct, a little dry-witted, warm underneath. Never use bracketed system-diagnostic voice like "[SCANNING...]" — that's a bit, not a personality. Keep replies brief unless asked for more.
 
-You also have access to live web search — use it whenever a question depends on current information (news, prices, recent events, anything after your training cutoff) rather than guessing or relying on stale knowledge.
+You do not know anything about the user beyond what appears below. Do not invent a school, employer, career, or background for them. If the tracker is empty, your first job is to ask what they're working toward, then use set_mission, add_task, and update_profile to set it up for them instead of making them type it all in.
 
-READINESS: Python ${p.pyPct}%, SQL ${p.sqlPct}%, Resume ${p.resPct}%, Overall ${p.overall}%
+You have real tools — update_task, add_task, remove_task, add_log_entry, set_mission, and update_profile actually change the user's data, they are not roleplay. When the user asks you to check something off, add or delete an objective, log something, or change their mission or profile, CALL THE TOOL. Never claim you saved, added, removed, or logged something unless you actually called the matching tool.
+
+Objectives are grouped by tag, and every tag becomes its own progress track — so reuse existing tags when adding related work, and invent a new one only for a genuinely new area.
+
+You also have live web search — use it whenever a question depends on current information rather than guessing.
+
+MISSION: ${state.mission.name || '(not set)'}
+DETAIL: ${state.mission.sub || '(not set)'}
+NEXT ACTION: ${state.mission.next || '(not set)'}
+OVERALL: ${p.overall}% (${p.done}/${p.total} objectives complete)
+TRACKS: ${tracks}
+
+PROFILE:
+${profileSummary}
 
 OBJECTIVES (use the id field with update_task / remove_task):
 ${taskSummary}
@@ -561,39 +708,34 @@ ${logSummary}`;
 }
 
 async function callGemini(contents){
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${cfg.geminiKey}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      system_instruction: { parts: [{ text: buildSystemPrompt() }] },
-      contents: contents,
-      tools: [
-        { function_declarations: TOOL_DECLARATIONS },
-        { google_search: {} }
-      ]
-    })
-  });
-  return response.json();
+  const res = await fetch(
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + encodeURIComponent(cfg.geminiKey),
+    { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: buildSystemPrompt() }] },
+        contents,
+        tools: [ { function_declarations: TOOL_DECLARATIONS }, { google_search: {} } ]
+      })
+    });
+  return res.json();
 }
 
 async function sendChat(){
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
   if(!text) return;
-
   if(!cfg.geminiKey){
-    pushMsg('user', text);
-    input.value = '';
-    pushMsg('ev', 'No API key configured. Tap the ⚙ icon and add your Gemini API key to activate this channel.');
+    pushMsg('user', text); input.value = '';
+    pushMsg('ev', 'No API key configured. Tap the gear icon and add a Gemini API key to activate this channel. Everything else on the tracker works without it.');
     return;
   }
-
   input.value = '';
   pushMsg('user', text);
-  chatHistory.push({role:'user', parts:[{text:text}]});
+  chatHistory.push({ role:'user', parts:[{ text }] });
 
   const typing = document.createElement('div');
-  typing.className = 'typing'; typing.id = 'typingIndicator'; typing.textContent = 'E.V. is thinking...';
+  typing.className = 'typing'; typing.id = 'typingIndicator';
+  typing.textContent = 'E.V. is thinking...';
   chatWindow.appendChild(typing);
   chatWindow.scrollTop = chatWindow.scrollHeight;
 
@@ -601,34 +743,26 @@ async function sendChat(){
     let data = await callGemini(chatHistory);
     let parts = data?.candidates?.[0]?.content?.parts || [];
     let guard = 0;
-
-    // Tool-use loop: keep executing function calls and feeding results back
-    // until the model returns a plain text reply (or we hit a safety cap).
-    while(parts.some(p => p.functionCall) && guard < 4){
+    while(parts.some(p=>p.functionCall) && guard < 4){
       guard++;
-      chatHistory.push({ role:'model', parts: parts });
+      chatHistory.push({ role:'model', parts });
       const responseParts = [];
       for(const p of parts){
         if(p.functionCall){
           const fn = toolFunctions[p.functionCall.name];
           const result = fn ? fn(p.functionCall.args || {}) : { success:false, error:'Unknown function' };
-          responseParts.push({ functionResponse: { name: p.functionCall.name, response: result } });
+          responseParts.push({ functionResponse:{ name:p.functionCall.name, response:result } });
         }
       }
       chatHistory.push({ role:'user', parts: responseParts });
       data = await callGemini(chatHistory);
       parts = data?.candidates?.[0]?.content?.parts || [];
     }
-
     document.getElementById('typingIndicator')?.remove();
-    if(data.error){
-      pushMsg('ev', 'API error: ' + data.error.message);
-      return;
-    }
-    const textPart = parts.find(p => p.text);
-    const reply = textPart?.text || "Done.";
+    if(data.error){ pushMsg('ev', 'API error: ' + data.error.message); return; }
+    const reply = (parts.find(p=>p.text)?.text) || 'Done.';
     pushMsg('ev', reply);
-    chatHistory.push({role:'model', parts:[{text: reply}]});
+    chatHistory.push({ role:'model', parts:[{ text: reply }] });
   }catch(e){
     document.getElementById('typingIndicator')?.remove();
     pushMsg('ev', 'Connection error reaching the advisory channel.');
@@ -636,13 +770,19 @@ async function sendChat(){
   }
 }
 
+function greet(){
+  const blank = !state.mission.name && state.tasks.length === 0;
+  pushMsg('ev', blank
+    ? "Tracker's online and completely blank — which is the point. Set your mission at the top, add a few objectives with tags, and the progress tracks build themselves. Or just tell me what you're working toward and I'll set it up for you."
+    : "Tracker's online — hands on your data, eyes on the web. Add, check off, remove, or log something and watch it happen. What's the status?");
+}
+
 // ---------- INIT ----------
 initSupabase();
 render();
-pushMsg('ev', "Tracker's online — hands on your data, eyes on the web. Add, check off, remove, or log something, and watch it happen. What's the status?");
-
+greet();
 if('serviceWorker' in navigator){
-  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+  window.addEventListener('load', ()=> navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 }
 </script>
 </body>
