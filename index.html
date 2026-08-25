@@ -205,10 +205,25 @@
 
   /* ---------- ADVISORY CHANNEL ---------- */
   .ai-panel{ grid-column: 1 / -1; }
+  .ev-launch{
+    display:block; width:100%; text-align:left; cursor:pointer;
+    background: linear-gradient(180deg, var(--panel-2), var(--panel));
+    border:1px solid var(--teal-dim); color:var(--teal);
+    padding:16px 20px; margin-bottom:14px; transition:.18s;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  }
+  .ev-launch:hover{ border-color:var(--teal); background:linear-gradient(180deg, #0d2229, var(--panel-2));
+    box-shadow: 0 0 18px rgba(53,230,200,0.18); }
+  .ev-launch-main{ display:block; font-family:'Share Tech Mono', monospace; font-size:17px; letter-spacing:4px;
+    text-shadow: var(--glow); }
+  .ev-launch-sub{ display:block; font-family:'Share Tech Mono', monospace; font-size:10px; letter-spacing:2px;
+    color:var(--red); margin-top:5px; }
+  .ev-launch-sub.on{ color:var(--text-dim); }
   .status-badge{ font-family:'Share Tech Mono'; font-size:10px; letter-spacing:2px; padding:2px 8px; border:1px solid; white-space:nowrap; }
   .status-badge.off{ color:var(--red); border-color:var(--red); background:rgba(255,87,87,0.08); }
   .status-badge.on{ color:var(--teal); border-color:var(--teal-dim); background:rgba(53,230,200,0.08); }
-  .chat-window{ max-height: 260px; overflow-y:auto; padding: 4px 4px 10px; margin-bottom:10px; display:flex; flex-direction:column; gap:10px; }
+  .chat-window{ min-height: 300px; max-height: calc(100vh - 300px); overflow-y:auto;
+    padding: 4px 4px 10px; margin-bottom:12px; display:flex; flex-direction:column; gap:10px; }
   .msg{ font-size:13px; line-height:1.5; max-width:80%; padding:9px 12px; white-space:pre-wrap; }
   .msg.user{ align-self:flex-end; background: var(--panel-2); border:1px solid var(--line); color:var(--text); }
   .msg.ev{ align-self:flex-start; background: rgba(53,230,200,0.06); border:1px solid var(--line-bright); color:var(--text); }
@@ -252,6 +267,11 @@
   .diag-out .bad{ color:var(--red); }
   .diag-out .warn{ color:var(--amber); }
   .diag-out .dim{ color:var(--text-dim); }
+  .key-row{ display:flex; gap:6px; }
+  .key-row input{ flex:1; }
+  .key-eye{ flex:none; background:var(--panel-2); border:1px solid var(--line); color:var(--text-dim);
+    padding:0 14px; cursor:pointer; font-family:'Share Tech Mono', monospace; font-size:10.5px; letter-spacing:2px; }
+  .key-eye:hover{ color:var(--teal); border-color:var(--teal-dim); }
 </style>
 </head>
 <body>
@@ -331,24 +351,32 @@
     </div>
   </div>
 
-  <div class="grid" style="grid-template-columns:1fr;">
-    <div class="panel ai-panel">
-      <div class="panel-title">
-        <span>E.V. &mdash; ADVISORY CHANNEL</span>
-        <span style="display:flex; align-items:center; gap:10px;">
-          <span class="status-badge off" id="apiBadge">API OFFLINE</span>
-          <span class="dot"></span>
-        </span>
-      </div>
-      <div class="chat-window" id="chatWindow"></div>
-      <div class="chat-input-row">
-        <input id="chatInput" type="text" placeholder="Ask E.V. anything..."/>
-        <button class="btn" id="chatSendBtn" data-act="sendchat">SEND</button>
-      </div>
-    </div>
-  </div>
+  <button class="ev-launch" data-act="openchat">
+    <span class="ev-launch-main">&#9656; RUN E.V. CHANNEL</span>
+    <span class="ev-launch-sub" id="evLaunchStatus">API OFFLINE &mdash; AWAITING CONNECTION</span>
+  </button>
 
   <div class="footer-note">Emulated Vector 1.0.0</div>
+</div>
+
+<!-- ============ E.V. ADVISORY CHANNEL VIEW ============ -->
+<div class="frame" id="chatView" style="display:none;">
+  <div class="view-header">
+    <button class="back-btn" data-act="backhud">&#9666; BACK TO HUD</button>
+    <div style="flex:1;">
+      <div class="vtitle">E.V.</div>
+      <span class="vsub">ADVISORY CHANNEL</span>
+    </div>
+    <span class="status-badge off" id="apiBadge">API OFFLINE</span>
+  </div>
+  <div class="panel ai-panel">
+    <div class="chat-window" id="chatWindow"></div>
+    <div class="chat-input-row">
+      <input id="chatInput" type="text" placeholder="Ask E.V. anything..."/>
+      <button class="btn" id="chatSendBtn" data-act="sendchat">SEND</button>
+    </div>
+  </div>
+  <div class="footer-note" style="margin-top:16px;">Emulated Vector 1.0.0</div>
 </div>
 
 <!-- ============ METRIC PAGE VIEW ============ -->
@@ -397,7 +425,10 @@
     <div class="sect"></div>
     <div class="sect-title">ADVISORY CHANNEL (OPTIONAL)</div>
     <label>GEMINI API KEY</label>
-    <input id="cfgGeminiKey" type="password" placeholder="AIza...">
+    <div class="key-row">
+      <input id="cfgGeminiKey" type="password" placeholder="AIza...">
+      <button class="key-eye" id="keyEyeBtn" data-act="togglekey" title="Show / hide key">SHOW</button>
+    </div>
     <label>MODEL</label>
     <div id="modelSlot"></div>
     <button class="diag-btn" data-act="testapi">RUN DIAGNOSTIC</button>
@@ -456,6 +487,8 @@ function openSettings(){
   s.textContent = ''; s.className = 'sync-status';
   const d = document.getElementById('diagOut');
   d.innerHTML = ''; d.className = 'diag-out';
+  document.getElementById('cfgGeminiKey').type = 'password';
+  document.getElementById('keyEyeBtn').textContent = 'SHOW';
   renderModelSelect();
   document.getElementById('settingsModal').classList.add('show');
 }
@@ -631,20 +664,19 @@ function applyIdentity(){
 
 // ---------- API STATE ----------
 function applyApiState(){
-  const badge = document.getElementById('apiBadge');
-  const input = document.getElementById('chatInput');
-  const btn   = document.getElementById('chatSendBtn');
-  if(apiOnline()){
-    badge.textContent = 'API ONLINE — CONNECTION ESTABLISHED';
-    badge.className = 'status-badge on';
-    input.disabled = false; btn.disabled = false;
-    input.placeholder = 'Ask E.V. anything...';
-  } else {
-    badge.textContent = 'API OFFLINE — AWAITING CONNECTION';
-    badge.className = 'status-badge off';
-    input.disabled = true; btn.disabled = true;
-    input.placeholder = 'Channel offline.';
-  }
+  const badge  = document.getElementById('apiBadge');
+  const input  = document.getElementById('chatInput');
+  const btn    = document.getElementById('chatSendBtn');
+  const launch = document.getElementById('evLaunchStatus');
+  const online = apiOnline();
+  const label  = online ? 'API ONLINE — CONNECTION ESTABLISHED' : 'API OFFLINE — AWAITING CONNECTION';
+  badge.textContent = label;
+  badge.className = 'status-badge ' + (online ? 'on' : 'off');
+  // the launcher carries the same status, so it reads at a glance from the HUD
+  launch.textContent = label;
+  launch.className = 'ev-launch-sub' + (online ? ' on' : '');
+  input.disabled = !online; btn.disabled = !online;
+  input.placeholder = online ? 'Ask E.V. anything...' : 'Channel offline.';
 }
 
 // ============================================================
@@ -1036,25 +1068,76 @@ function renderModelSelect(){
 // ---------- CONNECTION DIAGNOSTIC ----------
 // Lists the models the key can reach, then sends one throwaway generate call.
 // Surfaces the raw HTTP status and error so failures stop being guesswork.
+// Google began issuing AQ.-prefixed Gemini keys in 2026 alongside the classic
+// AIzaSy... ones. Both are valid; only reject shapes that are definitely wrong.
+function keyShapeReport(raw){
+  const key = raw.trim();
+  const notes = [];
+  const isAIza = /^AIza/.test(key);
+  const isAQ   = /^AQ\./.test(key);
+  if(raw !== key) notes.push('had leading/trailing whitespace (auto-trimmed, but check what you pasted)');
+  if(/\s/.test(key)) notes.push('<b>contains a space or line break inside it</b> — the paste broke');
+  if(/^["']|["']$/.test(key)) notes.push('<b>is wrapped in quotes</b> — paste the key only, no quotes');
+  if(!isAIza && !isAQ) notes.push('<b>starts with neither AIza nor AQ.</b> — those are the two Gemini key formats. An OAuth token (ya29...), a service-account JSON, or the key\'s <i>name</i> will all fail here');
+  if(isAIza && key.length !== 39) notes.push('<b>is ' + key.length + ' characters</b> — AIza keys are normally 39, so this looks truncated or padded');
+  let html = '<b class="dim">KEY SHAPE</b> <span class="dim">' + key.length + ' chars, starts &quot;' +
+    esc(key.slice(0,4)) + '&quot;, ends &quot;' + esc(key.slice(-4)) + '&quot;</span>';
+  if(isAQ) html += '<br><span class="ok">AQ. format — the newer Gemini key type. Valid.</span>';
+  if(notes.length) html += '<br><span class="warn">&#9888; The key ' + notes.join('<br><span class="warn">&#9888; The key ') + '</span>';
+  else if(!isAQ) html += '<br><span class="ok">Shape looks normal.</span>';
+  return html;
+}
+
+// Auth via the x-goog-api-key header, falling back to the ?key= query string if
+// the custom-header CORS preflight is what's failing. Reports which path worked.
+let lastAuthPath = '';
+async function gFetch(path, init, key){
+  const base = 'https://generativelanguage.googleapis.com/v1beta/' + path;
+  const opts = Object.assign({}, init);
+  opts.headers = Object.assign({}, (init && init.headers) || {}, { 'x-goog-api-key': key });
+  try{
+    const r = await fetch(base, opts);
+    lastAuthPath = 'header';
+    return r;
+  }catch(e){
+    const sep = base.indexOf('?') >= 0 ? '&' : '?';
+    const r = await fetch(base + sep + 'key=' + encodeURIComponent(key), init);
+    lastAuthPath = 'query';
+    return r;
+  }
+}
+
 async function runDiagnostic(){
-  const key = document.getElementById('cfgGeminiKey').value.trim();
+  const raw = document.getElementById('cfgGeminiKey').value;
+  const key = raw.trim();
   const out = document.getElementById('diagOut');
   out.className = 'diag-out show';
   if(!key){ out.innerHTML = '<span class="bad">No API key entered.</span>'; return; }
   out.innerHTML = '<span class="dim">Running...</span>';
-  const lines = [];
+  const lines = [keyShapeReport(raw), ''];
+  if(location.protocol === 'file:'){
+    lines.push('<b class="bad">PAGE OPENED FROM DISK</b>',
+      '<span class="warn">This page is running from a file:// path, so the browser sends no origin and Google refuses the request before it is even authenticated. The API cannot be reached this way regardless of your key. Open the hosted version of the HUD (GitHub Pages), or serve the folder locally, then re-run.</span>', '');
+  }
   let usable = [];
 
   // 1. can the key list models at all?
   try{
-    const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200&key=' + encodeURIComponent(key));
+    const r = await gFetch('models?pageSize=200', null, key);
     const j = await r.json();
     if(!r.ok || j.error){
       const e = j.error || {};
       lines.push('<b class="bad">LIST MODELS &mdash; HTTP ' + r.status + '</b>');
       lines.push('<span class="bad">' + esc(e.status || '') + '</span> ' + esc(e.message || 'Unknown error'));
-      if(r.status === 400) lines.push('<span class="warn">A 400 here usually means the key string itself is malformed or truncated.</span>');
-      if(r.status === 403) lines.push('<span class="warn">403 means the key is invalid, revoked, or the Generative Language API is not enabled on its project.</span>');
+      if(r.status === 400){
+        lines.push('<span class="warn">Google is rejecting the key string itself &mdash; this is NOT a quota or billing problem, and waiting will not fix it. Usual causes, most common first:</span>');
+        lines.push('<span class="dim">1. The key was mis-copied &mdash; truncated, or a character dropped. Hit SHOW and compare it to AI Studio.</span>');
+        lines.push('<span class="dim">2. The key was deleted or regenerated in AI Studio, so the old string is dead.</span>');
+        lines.push('<span class="dim">3. It is the wrong credential &mdash; an OAuth client ID, a service account, or a Vertex AI key. Only an AI Studio AIza... key works here.</span>');
+        lines.push('<span class="dim">4. The Generative Language API is disabled on the key\'s Google Cloud project.</span>');
+        lines.push('<span class="dim">5. The key has application restrictions (HTTP referrer / IP) that exclude the site serving this page.</span>');
+      }
+      if(r.status === 403) lines.push('<span class="warn">403 means the key is recognised but not permitted &mdash; check API restrictions on the key, or whether the Generative Language API is enabled on its project.</span>');
       out.innerHTML = lines.join('<br>');
       return;
     }
@@ -1074,8 +1157,13 @@ async function runDiagnostic(){
       renderModelSelect();
     }
   }catch(e){
-    out.innerHTML = '<b class="bad">NETWORK ERROR</b><br>' + esc(e.message) +
-      '<br><span class="warn">Check your connection, or an extension/firewall blocking generativelanguage.googleapis.com.</span>';
+    lines.push('<b class="bad">NETWORK ERROR</b>', esc(e.message),
+      '<span class="warn">The request never reached Google, so this is not about your key. In order of likelihood:</span>',
+      '<span class="dim">1. The page is open from disk (file://) instead of a real URL — check the address bar.</span>',
+      '<span class="dim">2. An ad blocker, privacy extension, or VPN is blocking generativelanguage.googleapis.com. Try a private window with extensions off.</span>',
+      '<span class="dim">3. A network/firewall rule is blocking Google APIs.</span>',
+      '<span class="dim">4. You are offline.</span>');
+    out.innerHTML = lines.join('<br>');
     return;
   }
 
@@ -1084,16 +1172,16 @@ async function runDiagnostic(){
   lines.push('<span class="dim">Testing ' + esc(model) + '...</span>');
   out.innerHTML = lines.join('<br>');
   try{
-    const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) +
-      ':generateContent?key=' + encodeURIComponent(key),
+    const r = await gFetch('models/' + encodeURIComponent(model) + ':generateContent',
       { method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ contents:[{ role:'user', parts:[{ text:'ping' }] }],
-          generationConfig:{ maxOutputTokens:1 } }) });
+          generationConfig:{ maxOutputTokens:1 } }) }, key);
     const j = await r.json();
     lines.pop();
     if(r.ok && !j.error){
       lines.push('<b class="ok">GENERATE OK &mdash; HTTP 200</b>');
       lines.push('<span class="ok">Channel is live on ' + esc(model) + '. Save to apply.</span>');
+      lines.push('<span class="dim">Authenticated via ' + esc(lastAuthPath === 'header' ? 'x-goog-api-key header' : '?key= query string') + '.</span>');
     } else {
       const e = j.error || {};
       lines.push('<b class="bad">GENERATE FAILED &mdash; HTTP ' + r.status + '</b>');
@@ -1134,20 +1222,29 @@ function metricCardInner(m){
     '</div>';
 }
 
+function showView(v){
+  closeAllSelects();
+  document.getElementById('hudView').style.display    = v === 'hud'    ? '' : 'none';
+  document.getElementById('metricView').style.display = v === 'metric' ? '' : 'none';
+  document.getElementById('chatView').style.display   = v === 'chat'   ? '' : 'none';
+  window.scrollTo(0,0);
+}
 function openPage(id){
   currentPageId = id;
-  document.getElementById('hudView').style.display = 'none';
-  document.getElementById('metricView').style.display = '';
   renderNewTypeSelect();
   renderMetricPage();
-  window.scrollTo(0,0);
+  showView('metric');
+}
+function openChat(){
+  showView('chat');
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+  const i = document.getElementById('chatInput');
+  if(!i.disabled) i.focus();
 }
 function backToHud(){
   currentPageId = null;
-  document.getElementById('metricView').style.display = 'none';
-  document.getElementById('hudView').style.display = '';
   render();
-  window.scrollTo(0,0);
+  showView('hud');
 }
 
 // ============================================================
@@ -1311,6 +1408,7 @@ document.addEventListener('click', e=>{
     case 'loadpage':    openPage(id); break;
     case 'delpage':     removePage(id); break;
     case 'backhud':     backToHud(); break;
+    case 'openchat':    openChat(); break;
     case 'export':      exportPageXlsx(); break;
     case 'addmetric':   addMetric(); break;
     case 'delmetric':   removeMetric(id); break;
@@ -1318,6 +1416,11 @@ document.addEventListener('click', e=>{
     case 'opencfg':     openSettings(); break;
     case 'closecfg':    closeSettings(); break;
     case 'testapi':     runDiagnostic(); break;
+    case 'togglekey':   { const k = document.getElementById('cfgGeminiKey');
+                          const shown = k.type === 'text';
+                          k.type = shown ? 'password' : 'text';
+                          document.getElementById('keyEyeBtn').textContent = shown ? 'SHOW' : 'HIDE';
+                          break; }
     case 'savecfg':     saveSettings(); break;
     case 'reset':       resetTracker(); break;
   }
@@ -1750,16 +1853,15 @@ ${logSummary}`;
 }
 
 async function callGemini(contents){
-  const res = await fetch(
-    'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(activeModel()) +
-      ':generateContent?key=' + encodeURIComponent(cfg.geminiKey),
+  const res = await gFetch(
+    'models/' + encodeURIComponent(activeModel()) + ':generateContent',
     { method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         system_instruction: { parts: [{ text: buildSystemPrompt() }] },
         contents,
         tools: [ { function_declarations: TOOL_DECLARATIONS }, { google_search: {} } ]
       })
-    });
+    }, cfg.geminiKey);
   return res.json();
 }
 
