@@ -169,6 +169,40 @@
     font-family:'JetBrains Mono'; font-size:11px; padding:5px 4px; outline:none; }
   .metric-edit .lbl{ font-size:10px; color:var(--text-dim); letter-spacing:1px; }
 
+  /* ---------- HUD DROPDOWN (replaces native select) ---------- */
+  .hs{ position:relative; flex:none; }
+  .hs.open{ z-index:81; }
+  .hs-trigger{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:var(--bg); border:1px solid var(--line); color:var(--teal);
+    font-family:'Share Tech Mono', monospace; font-size:11px; letter-spacing:2px;
+    padding:6px 10px; cursor:pointer; min-width:136px; outline:none;
+    -webkit-user-select:none; user-select:none; transition:.15s;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%);
+  }
+  .hs-trigger:hover, .hs.open .hs-trigger{ border-color:var(--teal-dim); background:var(--panel-2); }
+  .hs-trigger:focus-visible{ border-color:var(--teal); box-shadow:0 0 0 1px var(--teal-dim); }
+  .hs-caret{ color:var(--text-dim); font-size:8px; transition:transform .18s ease; }
+  .hs.open .hs-caret{ transform:rotate(180deg); color:var(--teal); }
+  .hs-panel{
+    display:none; position:absolute; left:0; top:calc(100% + 5px); min-width:100%; z-index:82;
+    background:var(--panel-2); border:1px solid var(--teal-dim); padding:3px;
+    box-shadow: 0 10px 28px rgba(0,0,0,.7), 0 0 14px rgba(53,230,200,0.14);
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+  }
+  .hs.open .hs-panel{ display:block; }
+  .hs.up .hs-panel{ top:auto; bottom:calc(100% + 5px);
+    clip-path: polygon(0 10px, 10px 0, 100% 0, 100% 100%, 0 100%); }
+  .hs-opt{
+    display:flex; align-items:center; gap:7px; padding:7px 11px 7px 8px;
+    font-family:'Share Tech Mono', monospace; font-size:11px; letter-spacing:2px;
+    color:var(--text-dim); cursor:pointer; white-space:nowrap; border-left:2px solid transparent;
+  }
+  .hs-opt::before{ content:"\25B8"; font-size:8px; opacity:0; }
+  .hs-opt:hover, .hs-opt.active{ background:rgba(53,230,200,0.09); color:var(--text); border-left-color:var(--teal-dim); }
+  .hs-opt.sel{ color:var(--teal); border-left-color:var(--teal); }
+  .hs-opt.sel::before{ opacity:1; }
+
   /* ---------- ADVISORY CHANNEL ---------- */
   .ai-panel{ grid-column: 1 / -1; }
   .status-badge{ font-family:'Share Tech Mono'; font-size:10px; letter-spacing:2px; padding:2px 8px; border:1px solid; white-space:nowrap; }
@@ -244,7 +278,7 @@
     </div>
 
     <div class="panel">
-      <div class="panel-title">ACTIVE MISSION <span class="dot"></span></div>
+      <div class="panel-title">ACTIVE <span class="dot"></span></div>
       <div class="mission-name edit" contenteditable="true" data-bind="mission.name" data-ph="USER'S MAIN OBJECTIVE"></div>
       <div class="mission-sub edit" contenteditable="true" data-bind="mission.sub" data-ph="Add a short description of the goal"></div>
       <div id="trackBars"></div>
@@ -320,14 +354,7 @@
     <div class="panel-title">ADD METRIC <span class="dot"></span></div>
     <div class="add-row" style="flex-wrap:wrap;">
       <input id="newMetricLabel" class="grow" type="text" placeholder="Metric name..."/>
-      <select id="newMetricType">
-        <option value="kpi">KPI CARD</option>
-        <option value="bar">PROGRESS BAR</option>
-        <option value="bullet">BULLET GRAPH</option>
-        <option value="gauge">GAUGE CHART</option>
-        <option value="thermo">THERMOMETER</option>
-        <option value="line">LINE GRAPH</option>
-      </select>
+      <span id="newTypeSlot"></span>
       <input id="newMetricValue" type="number" placeholder="VALUE" style="width:88px;"/>
       <input id="newMetricTarget" type="number" placeholder="TARGET" style="width:88px;"/>
       <input id="newMetricUnit" type="text" placeholder="UNIT" style="width:70px;" maxlength="8"/>
@@ -864,10 +891,110 @@ function renderMetricPage(){
   });
 }
 
+// ---------- HUD DROPDOWN ----------
+// Native <select> popups are drawn by the OS and can't be themed, so chart-type
+// pickers use this instead. Keyboard + ARIA behave like a real listbox.
+let newMetricType = 'kpi';
+
+function hudSelect(attrs, value){
+  const cur = TYPE_NAMES[value] ? value : 'kpi';
+  return '<div class="hs" ' + attrs + '>' +
+    '<div class="hs-trigger" tabindex="0" role="combobox" aria-haspopup="listbox" aria-expanded="false">' +
+      '<span class="hs-cur">' + esc(TYPE_NAMES[cur]) + '</span><span class="hs-caret">&#9660;</span>' +
+    '</div>' +
+    '<div class="hs-panel" role="listbox">' +
+      Object.keys(TYPE_NAMES).map(k =>
+        '<div class="hs-opt' + (k===cur ? ' sel' : '') + '" role="option" aria-selected="' + (k===cur) + '" data-hs-opt="' + k + '">' +
+        esc(TYPE_NAMES[k]) + '</div>').join('') +
+    '</div></div>';
+}
+
+function closeAllSelects(){
+  document.querySelectorAll('.hs.open').forEach(hs=>{
+    hs.classList.remove('open','up');
+    hs.querySelectorAll('.hs-opt.active').forEach(o=>o.classList.remove('active'));
+    const t = hs.querySelector('.hs-trigger');
+    if(t) t.setAttribute('aria-expanded','false');
+  });
+}
+
+function openSelect(hs){
+  closeAllSelects();
+  hs.classList.add('open');
+  hs.querySelector('.hs-trigger').setAttribute('aria-expanded','true');
+  // flip upward when there isn't room below
+  const r = hs.getBoundingClientRect();
+  const panelH = hs.querySelector('.hs-panel').offsetHeight || 200;
+  if(r.bottom + panelH + 12 > window.innerHeight && r.top > panelH + 12) hs.classList.add('up');
+}
+
+function applySelect(hs, val){
+  if(!TYPE_NAMES[val]) return;
+  if(hs.dataset.hs === 'newtype'){
+    newMetricType = val;
+    hs.querySelector('.hs-cur').textContent = TYPE_NAMES[val];
+    hs.querySelectorAll('.hs-opt').forEach(o=>{
+      const on = o.dataset.hsOpt === val;
+      o.classList.toggle('sel', on);
+      o.setAttribute('aria-selected', on);
+    });
+  } else if(hs.dataset.hs === 'mtype'){
+    const pg = getPage(currentPageId); if(!pg) return;
+    const m = pg.metrics.find(x=>x.id===hs.dataset.id); if(!m) return;
+    m.type = val;
+    if(m.type === 'line' && m.series.length === 0) m.series = [m.value];
+    save(); renderMetricPage();
+  }
+}
+
+document.addEventListener('click', e=>{
+  const opt = e.target.closest('.hs-opt');
+  if(opt){ const hs = opt.closest('.hs'); applySelect(hs, opt.dataset.hsOpt); closeAllSelects(); return; }
+  const trig = e.target.closest('.hs-trigger');
+  if(trig){
+    const hs = trig.closest('.hs');
+    if(hs.classList.contains('open')) closeAllSelects(); else openSelect(hs);
+    return;
+  }
+  closeAllSelects();
+});
+
+document.addEventListener('keydown', e=>{
+  const trig = e.target.closest ? e.target.closest('.hs-trigger') : null;
+  if(!trig) return;
+  const hs = trig.closest('.hs');
+  const opts = [...hs.querySelectorAll('.hs-opt')];
+  const open = hs.classList.contains('open');
+  if(e.key === 'Escape'){ if(open){ e.preventDefault(); closeAllSelects(); } return; }
+  if(e.key === 'Enter' || e.key === ' '){
+    e.preventDefault();
+    if(!open){ openSelect(hs); return; }
+    const pick = hs.querySelector('.hs-opt.active') || hs.querySelector('.hs-opt.sel');
+    if(pick) applySelect(hs, pick.dataset.hsOpt);
+    closeAllSelects();
+    return;
+  }
+  if(e.key === 'ArrowDown' || e.key === 'ArrowUp'){
+    e.preventDefault();
+    if(!open){ openSelect(hs); return; }
+    let i = opts.findIndex(o=>o.classList.contains('active'));
+    if(i < 0) i = opts.findIndex(o=>o.classList.contains('sel'));
+    i = Math.max(0, Math.min(opts.length-1, (i < 0 ? 0 : i) + (e.key === 'ArrowDown' ? 1 : -1)));
+    opts.forEach(o=>o.classList.remove('active'));
+    opts[i].classList.add('active');
+  }
+});
+
+window.addEventListener('resize', closeAllSelects);
+window.addEventListener('scroll', closeAllSelects, true);
+
+function renderNewTypeSelect(){
+  const slot = document.getElementById('newTypeSlot');
+  if(slot) slot.innerHTML = hudSelect('data-hs="newtype"', newMetricType);
+}
+
 function metricCardInner(m){
   const isLine = m.type === 'line';
-  const opts = Object.keys(TYPE_NAMES).map(k =>
-    '<option value="' + k + '"' + (m.type===k?' selected':'') + '>' + TYPE_NAMES[k] + '</option>').join('');
   return '<div class="mtitle"><span class="edit" contenteditable="true" data-mfield="label" data-id="' + esc(m.id) + '" data-ph="METRIC NAME">' + esc(m.label) + '</span>' +
       '<span class="del" data-act="delmetric" data-id="' + esc(m.id) + '">&#10005;</span></div>' +
     '<div class="mkind">' + esc(TYPE_NAMES[m.type] || 'KPI CARD') + (m.unit ? ' · ' + esc(m.unit.toUpperCase()) : '') + '</div>' +
@@ -878,7 +1005,7 @@ function metricCardInner(m){
         : '<span class="lbl">VAL</span><input type="number" step="any" data-mnum="value" data-id="' + esc(m.id) + '" value="' + esc(m.value) + '">') +
       '<span class="lbl">TGT</span><input type="number" step="any" data-mnum="target" data-id="' + esc(m.id) + '" value="' + esc(m.target) + '">' +
       '<span class="lbl">UNIT</span><input type="text" maxlength="8" data-mnum="unit" data-id="' + esc(m.id) + '" value="' + esc(m.unit) + '" style="width:60px">' +
-      '<select data-mtype="1" data-id="' + esc(m.id) + '">' + opts + '</select>' +
+      hudSelect('data-hs="mtype" data-id="' + esc(m.id) + '"', m.type) +
     '</div>';
 }
 
@@ -886,6 +1013,7 @@ function openPage(id){
   currentPageId = id;
   document.getElementById('hudView').style.display = 'none';
   document.getElementById('metricView').style.display = '';
+  renderNewTypeSelect();
   renderMetricPage();
   window.scrollTo(0,0);
 }
@@ -1135,17 +1263,6 @@ document.addEventListener('input', e=>{
   if(box) box.innerHTML = renderChart(m);
   save();
 });
-// metric type switch — full card re-render
-document.addEventListener('change', e=>{
-  const el = e.target;
-  if(!el.dataset || !el.dataset.mtype) return;
-  const pg = getPage(currentPageId); if(!pg) return;
-  const m = pg.metrics.find(x=>x.id===el.dataset.id); if(!m) return;
-  m.type = el.value;
-  if(m.type === 'line' && m.series.length === 0) m.series = [m.value];
-  save(); renderMetricPage();
-});
-
 function toggleTask(id){
   const t = state.tasks.find(x=>x.id===id);
   if(!t) return;
@@ -1206,7 +1323,7 @@ function addMetric(){
   if(!label) return;
   const m = normalizeMetric({
     label,
-    type: document.getElementById('newMetricType').value,
+    type: newMetricType,
     value: document.getElementById('newMetricValue').value,
     target: document.getElementById('newMetricTarget').value || 100,
     unit: document.getElementById('newMetricUnit').value.trim()
@@ -1589,6 +1706,7 @@ function greet(){
 initSupabase();
 applyIdentity();
 applyApiState();
+renderNewTypeSelect();
 render();
 greet();
 
