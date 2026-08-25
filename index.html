@@ -270,6 +270,20 @@
   .diag-out .bad{ color:var(--red); }
   .diag-out .warn{ color:var(--amber); }
   .diag-out .dim{ color:var(--text-dim); }
+  .tabbar{ display:flex; gap:0; border-bottom:1px solid var(--line); margin:14px 0 4px; }
+  .tabbar .tab{ flex:1; background:transparent; border:none; border-bottom:2px solid transparent;
+    color:var(--text-dim); font-family:'Share Tech Mono', monospace; font-size:11px; letter-spacing:2px;
+    padding:9px 4px; cursor:pointer; transition:.15s; }
+  .tabbar .tab:hover{ color:var(--text); }
+  .tabbar .tab.active{ color:var(--teal); border-bottom-color:var(--teal); text-shadow:var(--glow); }
+  .tabpane{ display:none; }
+  .tabpane.show{ display:block; }
+  .btn-row{ display:flex; gap:8px; margin-top:12px; }
+  .btn-row .diag-btn{ margin-top:0; }
+  .hint-box{ border-left:2px solid var(--line-bright); background:rgba(53,230,200,0.04);
+    padding:8px 10px; font-size:11px; line-height:1.55; color:var(--text-dim); margin:10px 0 4px; }
+  .hint-box b.ok{ color:var(--teal); }
+  .hint-box b.warn{ color:var(--amber); }
   .key-row{ display:flex; gap:6px; }
   .key-row input{ flex:1; }
   .key-eye{ flex:none; background:var(--panel-2); border:1px solid var(--line); color:var(--text-dim);
@@ -412,30 +426,63 @@
   <div class="modal">
     <h3>SYSTEM CONFIG</h3>
 
-    <div class="sect-title">IDENTITY</div>
-    <label>YOUR NAME</label>
-    <input id="cfgUserName" type="text" placeholder="Your name..." maxlength="24">
-
-    <div class="sect"></div>
-    <div class="sect-title">CROSS-DEVICE SYNC (OPTIONAL)</div>
-    <label>SYNC CODE &mdash; same code on every device</label>
-    <input id="cfgSyncCode" type="text" placeholder="Pick a sync code...">
-    <label>SUPABASE PROJECT URL</label>
-    <input id="cfgSupaUrl" type="text" placeholder="https://xxxxx.supabase.co">
-    <label>SUPABASE ANON PUBLIC KEY</label>
-    <input id="cfgSupaKey" type="password" placeholder="eyJhbGciOi...">
-
-    <div class="sect"></div>
-    <div class="sect-title">ADVISORY CHANNEL (OPTIONAL)</div>
-    <label>GEMINI API KEY</label>
-    <div class="key-row">
-      <input id="cfgGeminiKey" type="password" placeholder="AIza...">
-      <button class="key-eye" id="keyEyeBtn" data-act="togglekey" title="Show / hide key">SHOW</button>
+    <div class="tabbar">
+      <button class="tab active" data-tabgo="identity">IDENTITY</button>
+      <button class="tab" data-tabgo="sync">SYNC</button>
+      <button class="tab" data-tabgo="advisory">ADVISORY</button>
     </div>
-    <label>MODEL</label>
-    <div id="modelSlot"></div>
-    <button class="diag-btn" data-act="testapi">RUN DIAGNOSTIC</button>
-    <div class="diag-out" id="diagOut"></div>
+
+    <!-- IDENTITY -->
+    <div class="tabpane show" id="pane-identity">
+      <label>DISPLAY NAME</label>
+      <input id="cfgUserName" type="text" placeholder="Your name..." maxlength="24">
+
+      <div class="sect"></div>
+      <div class="sect-title">ACCOUNT</div>
+      <div class="hint-box" id="authState">Not signed in.</div>
+      <div id="authForm">
+        <label>EMAIL</label>
+        <input id="cfgAuthEmail" type="email" placeholder="you@example.com" autocomplete="username">
+        <label>PASSWORD</label>
+        <input id="cfgAuthPass" type="password" placeholder="At least 6 characters" autocomplete="current-password">
+        <div class="btn-row">
+          <button class="diag-btn" data-act="signin">SIGN IN</button>
+          <button class="diag-btn" data-act="signup">CREATE ACCOUNT</button>
+        </div>
+      </div>
+      <button class="diag-btn" id="signOutBtn" data-act="signout" style="display:none;">SIGN OUT</button>
+      <div class="sync-status" id="authMsg"></div>
+    </div>
+
+    <!-- SYNC -->
+    <div class="tabpane" id="pane-sync">
+      <label>SUPABASE PROJECT URL</label>
+      <input id="cfgSupaUrl" type="text" placeholder="https://xxxxx.supabase.co">
+      <label>SUPABASE ANON PUBLIC KEY</label>
+      <input id="cfgSupaKey" type="password" placeholder="eyJhbGciOi...">
+
+      <div class="sect"></div>
+      <div class="sect-title">DATA KEY</div>
+      <div class="hint-box" id="syncModeNote"></div>
+      <label>SYNC CODE &mdash; used only while signed out</label>
+      <div class="key-row">
+        <input id="cfgSyncCode" type="text" placeholder="Pick a sync code...">
+        <button class="key-eye" data-act="gencode" title="Generate a strong random code">NEW</button>
+      </div>
+    </div>
+
+    <!-- ADVISORY -->
+    <div class="tabpane" id="pane-advisory">
+      <label>GEMINI API KEY</label>
+      <div class="key-row">
+        <input id="cfgGeminiKey" type="password" placeholder="AIza... or AQ....">
+        <button class="key-eye" id="keyEyeBtn" data-act="togglekey" title="Show / hide key">SHOW</button>
+      </div>
+      <label>MODEL</label>
+      <div id="modelSlot"></div>
+      <button class="diag-btn" data-act="testapi">RUN DIAGNOSTIC</button>
+      <div class="diag-out" id="diagOut"></div>
+    </div>
 
     <div class="sync-status" id="syncStatusMsg"></div>
     <div class="modal-actions">
@@ -464,20 +511,120 @@ let supabaseClient = null;
 
 function apiOnline(){ return !!(cfg.geminiKey && cfg.geminiKey.trim()); }
 
-function initSupabase(){
+// ---------- ACCOUNT / DATA KEY ----------
+// Signed in, the row key IS the Supabase user id, so an RLS policy of
+//   sync_code = auth.uid()::text
+// lets the database enforce that you only ever read or write your own row.
+// Signed out, it falls back to the old shared sync code (guessable — see the note in SYNC).
+let authUser = null;
+function syncKey(){ return authUser ? authUser.id : ((cfg.syncCode || '').trim()); }
+
+function updateSyncBadge(){
   const el = document.getElementById('syncState');
+  if(authUser)                          el.textContent = 'ACCOUNT';
+  else if(supabaseClient && syncKey())  el.textContent = 'CLOUD';
+  else if(supabaseClient)               el.textContent = 'NO KEY';
+  else                                  el.textContent = 'LOCAL';
+}
+
+function renderAuthState(){
+  const box  = document.getElementById('authState');
+  const form = document.getElementById('authForm');
+  const out  = document.getElementById('signOutBtn');
+  const note = document.getElementById('syncModeNote');
+  if(authUser){
+    box.innerHTML = 'Signed in as <b class="ok">' + esc(authUser.email || authUser.id) + '</b><br>Your data is keyed to this account on every device.';
+    form.style.display = 'none';
+    out.style.display  = '';
+    note.innerHTML = 'Signed in — data is keyed to your account id. The sync code below is <b>ignored</b>.';
+  } else {
+    box.innerHTML = supabaseClient
+      ? 'Not signed in. Data uses the sync code under the SYNC tab.'
+      : 'Not signed in. Connect Supabase under the <b class="warn">SYNC</b> tab first — accounts run on it.';
+    form.style.display = supabaseClient ? '' : 'none';
+    out.style.display  = 'none';
+    note.innerHTML = 'Signed out — anyone who knows or guesses this code can read and overwrite your data. Sign in on the IDENTITY tab for real per-account isolation.';
+  }
+  updateSyncBadge();
+}
+
+async function pullCloud(){
+  const k = syncKey();
+  if(!supabaseClient || !k) return;
+  const { data, error } = await supabaseClient.from('ev_tracker').select('*').eq('sync_code', k).maybeSingle();
+  if(error) throw error;
+  if(data && data.state){
+    state = migrate(data.state);
+    persistLocal();
+  } else {
+    await supabaseClient.from('ev_tracker').insert({ sync_code: k, state });
+  }
+  applyIdentity(); render();
+}
+
+async function doAuth(mode){
+  const msg = document.getElementById('authMsg');
+  const set = (t, cls) => { msg.textContent = t; msg.className = 'sync-status' + (cls ? ' ' + cls : ''); };
+  if(!supabaseClient){ set('Connect Supabase under the SYNC tab first, then SAVE.', 'err'); return; }
+  const email = document.getElementById('cfgAuthEmail').value.trim();
+  const pass  = document.getElementById('cfgAuthPass').value;
+  if(!email || !pass){ set('Email and password are both required.', 'err'); return; }
+  if(pass.length < 6){ set('Password must be at least 6 characters.', 'err'); return; }
+  set('Working...');
+  try{
+    const { data, error } = mode === 'up'
+      ? await supabaseClient.auth.signUp({ email, password: pass })
+      : await supabaseClient.auth.signInWithPassword({ email, password: pass });
+    if(error){ set(error.message, 'err'); return; }
+    if(mode === 'up' && !data.session){
+      set('Account created. Confirm the email Supabase just sent, then SIGN IN.', 'ok');
+      return;
+    }
+    authUser = data.user;
+    document.getElementById('cfgAuthPass').value = '';
+    set('Signed in as ' + authUser.email + '. Pulling your data...', 'ok');
+    await pullCloud();
+    set('Signed in as ' + authUser.email + '.', 'ok');
+    renderAuthState();
+  }catch(e){ set(e.message || 'Sign-in failed.', 'err'); }
+}
+
+async function doSignOut(){
+  const msg = document.getElementById('authMsg');
+  try{ if(supabaseClient) await supabaseClient.auth.signOut(); }catch(e){}
+  authUser = null;
+  msg.textContent = 'Signed out. Local data on this device is untouched.';
+  msg.className = 'sync-status';
+  renderAuthState();
+}
+
+async function initAuth(){
+  if(!supabaseClient){ renderAuthState(); return; }
+  try{
+    const { data } = await supabaseClient.auth.getSession();
+    authUser = (data && data.session) ? data.session.user : null;
+    if(authUser) await pullCloud();
+  }catch(e){ console.warn('session restore failed', e); }
+  renderAuthState();
+}
+
+function genSyncCode(){
+  const a = new Uint8Array(16);
+  crypto.getRandomValues(a);
+  return [...a].map(b=>b.toString(36).padStart(2,'0')).join('').slice(0,24);
+}
+
+function initSupabase(){
   if(cfg.supaUrl && cfg.supaKey && window.supabase){
     try{
       supabaseClient = window.supabase.createClient(cfg.supaUrl, cfg.supaKey);
-      el.textContent = 'CLOUD';
     }catch(e){
       supabaseClient = null;
-      el.textContent = 'LOCAL';
     }
   } else {
     supabaseClient = null;
-    el.textContent = 'LOCAL';
   }
+  updateSyncBadge();
 }
 
 function openSettings(){
@@ -492,7 +639,10 @@ function openSettings(){
   d.innerHTML = ''; d.className = 'diag-out';
   document.getElementById('cfgGeminiKey').type = 'password';
   document.getElementById('keyEyeBtn').textContent = 'SHOW';
+  document.getElementById('authMsg').textContent = '';
+  document.getElementById('authMsg').className = 'sync-status';
   renderModelSelect();
+  renderAuthState();
   document.getElementById('settingsModal').classList.add('show');
 }
 function closeSettings(){ document.getElementById('settingsModal').classList.remove('show'); }
@@ -515,15 +665,18 @@ async function saveSettings(){
 
   const statusEl = document.getElementById('syncStatusMsg');
   const hello = state.user.name ? 'Hello, ' + state.user.name + '. ' : '';
+  const k = syncKey();
 
-  if(supabaseClient && cfg.syncCode){
+  await initAuth();
+
+  if(supabaseClient && k){
     statusEl.textContent = 'Connecting...';
     statusEl.className = 'sync-status';
     try{
       const { data, error } = await supabaseClient
-        .from('ev_tracker').select('*').eq('sync_code', cfg.syncCode).maybeSingle();
+        .from('ev_tracker').select('*').eq('sync_code', k).maybeSingle();
       if(error){
-        statusEl.textContent = 'Error: ' + error.message + ' (is the ev_tracker table created?)';
+        statusEl.textContent = 'Sync error: ' + error.message;
         statusEl.className = 'sync-status err';
         return;
       }
@@ -533,9 +686,9 @@ async function saveSettings(){
         if(newName) incoming.user.name = newName;
         state = incoming;
       } else {
-        await supabaseClient.from('ev_tracker').insert({ sync_code: cfg.syncCode, state });
+        await supabaseClient.from('ev_tracker').insert({ sync_code: k, state });
       }
-      statusEl.textContent = hello + 'Connected.';
+      statusEl.textContent = hello + (authUser ? 'Synced to your account.' : 'Connected.');
       statusEl.className = 'sync-status ok';
       persistLocal();
       applyIdentity();
@@ -547,9 +700,10 @@ async function saveSettings(){
     }
   } else {
     save();
-    statusEl.textContent = hello + 'Saved locally.';
+    statusEl.textContent = hello + (supabaseClient ? 'Saved. Sign in or set a sync code to enable cross-device sync.' : 'Saved locally.');
     statusEl.className = 'sync-status ok';
   }
+  updateSyncBadge();
 
   // announce an API state change in the channel
   if(apiOnline() && !prevOnline){
@@ -1055,8 +1209,19 @@ window.addEventListener('scroll', closeAllSelects, true);
 // ---------- MODEL PICKER ----------
 // Google retires model names on their own schedule, so the model is configurable
 // and RUN DIAGNOSTIC repopulates this list with whatever the key can actually reach.
-const DEFAULT_MODEL = 'gemini-2.5-flash';
-let MODEL_OPTIONS = { 'gemini-2.5-flash':'gemini-2.5-flash' };
+const DEFAULT_MODEL = 'gemini-3.6-flash';
+// Seeded with the current line-up so the picker is useful before a diagnostic runs;
+// RUN DIAGNOSTIC replaces this with whatever the key can actually reach.
+let MODEL_OPTIONS = {
+  'gemini-3.7-flash':      'gemini-3.7-flash',
+  'gemini-3.6-flash':      'gemini-3.6-flash',
+  'gemini-3.5-flash':      'gemini-3.5-flash',
+  'gemini-3.5-flash-lite': 'gemini-3.5-flash-lite',
+  'gemini-2.5-flash':      'gemini-2.5-flash (legacy)'
+};
+// Closed to new API accounts — anyone still holding one can re-pick it from the list.
+const RESTRICTED_MODELS = ['gemini-2.5-flash','gemini-2.0-flash','gemini-1.5-flash','gemini-1.5-pro','gemini-pro'];
+if(cfg.model && RESTRICTED_MODELS.indexOf(cfg.model) >= 0) delete cfg.model;
 function activeModel(){ return (cfg.model && cfg.model.trim()) || DEFAULT_MODEL; }
 function renderModelSelect(){
   const slot = document.getElementById('modelSlot');
@@ -1153,7 +1318,10 @@ async function runDiagnostic(){
       MODEL_OPTIONS = {};
       usable.forEach(n => MODEL_OPTIONS[n] = n);
       if(!MODEL_OPTIONS[activeModel()]) {
-        const pick = usable.find(n=>/2\.5-flash$/.test(n)) || usable.find(n=>/flash/.test(n)) || usable[0];
+        const pick = usable.find(n=>/^gemini-3\.7-flash$/.test(n))
+                  || usable.find(n=>/^gemini-3\.6-flash$/.test(n))
+                  || usable.filter(n=>/flash$/.test(n)).sort().reverse()[0]
+                  || usable.find(n=>/flash/.test(n)) || usable[0];
         lines.push('<span class="warn">' + esc(activeModel()) + ' is NOT available to this key &mdash; switched to ' + esc(pick) + '.</span>');
         cfg.model = pick;
       }
@@ -1395,6 +1563,15 @@ function exportPageXlsx(){
 }
 
 // ---------- ACTIONS (delegated) ----------
+// settings tabs
+document.addEventListener('click', e=>{
+  const t = e.target.closest('[data-tabgo]');
+  if(!t) return;
+  const name = t.dataset.tabgo;
+  document.querySelectorAll('.tabbar .tab').forEach(b=>b.classList.toggle('active', b === t));
+  document.querySelectorAll('.tabpane').forEach(p=>p.classList.toggle('show', p.id === 'pane-' + name));
+});
+
 document.addEventListener('click', e=>{
   const el = e.target.closest('[data-act]');
   if(!el) return;
@@ -1419,6 +1596,11 @@ document.addEventListener('click', e=>{
     case 'opencfg':     openSettings(); break;
     case 'closecfg':    closeSettings(); break;
     case 'testapi':     runDiagnostic(); break;
+    case 'signin':      doAuth('in'); break;
+    case 'signup':      doAuth('up'); break;
+    case 'signout':     doSignOut(); break;
+    case 'gencode':     document.getElementById('cfgSyncCode').value = genSyncCode(); break;
+    case 'tabgo':       break;
     case 'togglekey':   { const k = document.getElementById('cfgGeminiKey');
                           const shown = k.type === 'text';
                           k.type = shown ? 'password' : 'text';
@@ -1594,10 +1776,11 @@ function deleteLog(id){
 function persistLocal(){ localStorage.setItem(STATE_KEY, JSON.stringify(state)); }
 async function save(){
   persistLocal();
-  if(supabaseClient && cfg.syncCode){
+  const k = syncKey();
+  if(supabaseClient && k){
     try{
       await supabaseClient.from('ev_tracker')
-        .upsert({ sync_code: cfg.syncCode, state, updated_at: new Date().toISOString() }, { onConflict: 'sync_code' });
+        .upsert({ sync_code: k, state, updated_at: new Date().toISOString() }, { onConflict: 'sync_code' });
     }catch(e){ console.warn('sync failed', e); }
   }
 }
@@ -1909,7 +2092,11 @@ async function sendChat(){
     if(data.error){
       const msg = String(data.error.message || '');
       const quota = /quota|exhaust|billing|RESOURCE_EXHAUSTED|429/i.test(msg);
-      pushMsg('ev', (quota ? 'API OFFLINE — QUOTA EXHAUSTED. ' : 'API ERROR: ') + msg, true);
+      const dead  = /no longer available|not found|not supported|deprecat/i.test(msg);
+      pushMsg('ev',
+        dead  ? 'MODEL UNAVAILABLE — ' + activeModel() + ' cannot be used with this key. Open SYSTEM CONFIG, ADVISORY tab, and hit RUN DIAGNOSTIC — it will list the models your key can reach and switch to one.\n\n' + msg
+      : quota ? 'API OFFLINE — QUOTA EXHAUSTED. ' + msg
+      :         'API ERROR: ' + msg, true);
       return;
     }
     const reply = (parts.find(p=>p.text)?.text) || 'Done.';
@@ -1941,6 +2128,7 @@ applyApiState();
 renderNewTypeSelect();
 render();
 greet();
+initAuth();
 
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=> navigator.serviceWorker.register('./sw.js').catch(()=>{}));
