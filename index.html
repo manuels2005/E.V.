@@ -1,42 +1,3 @@
-
-Cloud
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Index · HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -161,7 +122,7 @@ Index · HTML
   .add-row input:focus, .add-row select:focus{ border-color: var(--teal-dim); }
   .add-row button{ background: var(--teal-dim); color:#04120f; border:none; font-family:'Share Tech Mono'; letter-spacing:1px; padding:7px 12px; cursor:pointer; font-size:11px; flex:none; }
   .add-row button:hover{ background:var(--teal); }
- 
+
   /* ---------- METRIC MODULES ---------- */
   .page-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); gap:12px; }
   .page-card{ border:1px solid var(--line); background:var(--panel-2); padding:12px 14px 14px; position:relative; }
@@ -173,7 +134,7 @@ Index · HTML
   .page-card .load-btn:hover{ background:var(--teal-dim); color:#04120f; box-shadow:var(--glow); }
   .page-card .pdel{ position:absolute; top:8px; right:10px; color:var(--text-dim); cursor:pointer; font-size:11px; }
   .page-card .pdel:hover{ color:var(--red); }
- 
+
   .view-header{ display:flex; align-items:center; gap:14px; flex-wrap:wrap;
     border:1px solid var(--line-bright); background:linear-gradient(180deg,var(--panel-2),var(--panel));
     padding:14px 20px; margin-bottom:14px;
@@ -185,7 +146,7 @@ Index · HTML
   .back-btn:hover{ color:var(--teal); border-color:var(--teal-dim); }
   .export-btn{ color:var(--teal); border-color:var(--teal-dim); }
   .export-btn:hover{ background:var(--teal-dim); color:#04120f; box-shadow:var(--glow); }
- 
+
   .metric-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(290px,1fr)); gap:14px; }
   .metric-card{ border:1px solid var(--line); background:var(--panel-2); padding:12px 14px 14px; position:relative; }
   .metric-card::before{ content:""; position:absolute; top:-1px; left:-1px; width:9px; height:9px; border:1px solid var(--teal-dim); border-right:none; border-bottom:none; }
@@ -207,7 +168,7 @@ Index · HTML
   .metric-edit select{ background:var(--bg); border:1px solid var(--line); color:var(--text-dim);
     font-family:'JetBrains Mono'; font-size:11px; padding:5px 4px; outline:none; }
   .metric-edit .lbl{ font-size:10px; color:var(--text-dim); letter-spacing:1px; }
- 
+
   /* ---------- HUD DROPDOWN (replaces native select) ---------- */
   .hs{ position:relative; flex:none; }
   .hs.open{ z-index:81; }
@@ -241,7 +202,7 @@ Index · HTML
   .hs-opt:hover, .hs-opt.active{ background:rgba(53,230,200,0.09); color:var(--text); border-left-color:var(--teal-dim); }
   .hs-opt.sel{ color:var(--teal); border-left-color:var(--teal); }
   .hs-opt.sel::before{ opacity:1; }
- 
+
   /* ---------- ADVISORY CHANNEL ---------- */
   .ai-panel{ grid-column: 1 / -1; }
   .status-badge{ font-family:'Share Tech Mono'; font-size:10px; letter-spacing:2px; padding:2px 8px; border:1px solid; white-space:nowrap; }
@@ -294,7 +255,7 @@ Index · HTML
 </style>
 </head>
 <body>
- 
+
 <!-- ============ MAIN HUD VIEW ============ -->
 <div class="frame" id="hudView">
   <div class="header">
@@ -315,7 +276,7 @@ Index · HTML
       <div class="gear" data-act="opencfg" title="Settings">&#9881;</div>
     </div>
   </div>
- 
+
   <div class="grid">
     <div class="panel">
       <div class="panel-title">OBJECTIVES <span class="dot"></span></div>
@@ -326,7 +287,7 @@ Index · HTML
       </div>
       <div id="taskList"></div>
     </div>
- 
+
     <div class="panel">
       <div class="panel-title">ACTIVE MISSION <span class="dot"></span></div>
       <div class="mission-name edit" contenteditable="true" data-bind="mission.name" data-ph="USER'S MAIN OBJECTIVE"></div>
@@ -334,7 +295,7 @@ Index · HTML
       <div id="trackBars"></div>
       <div class="next-up"><b>NEXT UP:</b> <span class="edit" contenteditable="true" data-bind="mission.next" data-ph="The very next action..."></span></div>
     </div>
- 
+
     <div class="panel">
       <div class="panel-title">PROFILE <span class="dot"></span></div>
       <div class="metric-label edit" contenteditable="true" data-bind="profile.metricLabel" data-ph="KEY METRIC"></div>
@@ -346,7 +307,7 @@ Index · HTML
       <div id="profileList"></div>
     </div>
   </div>
- 
+
   <!-- METRIC MODULES -->
   <div class="grid" style="grid-template-columns:1fr;">
     <div class="panel">
@@ -358,7 +319,7 @@ Index · HTML
       <div class="page-grid" id="pageGrid"></div>
     </div>
   </div>
- 
+
   <div class="grid" style="grid-template-columns: 1fr;">
     <div class="panel">
       <div class="panel-title">LOG ENTRY <span class="dot"></span></div>
@@ -369,7 +330,7 @@ Index · HTML
       <div class="log-feed" id="logFeed"></div>
     </div>
   </div>
- 
+
   <div class="grid" style="grid-template-columns:1fr;">
     <div class="panel ai-panel">
       <div class="panel-title">
@@ -386,10 +347,10 @@ Index · HTML
       </div>
     </div>
   </div>
- 
+
   <div class="footer-note">Emulated Vector 1.0.0</div>
 </div>
- 
+
 <!-- ============ METRIC PAGE VIEW ============ -->
 <div class="frame" id="metricView" style="display:none;">
   <div class="view-header">
@@ -414,16 +375,16 @@ Index · HTML
   <div class="metric-grid" id="metricGrid"></div>
   <div class="footer-note" style="margin-top:16px;">Emulated Vector 1.0.0</div>
 </div>
- 
+
 <!-- SETTINGS MODAL -->
 <div class="modal-backdrop" id="settingsModal">
   <div class="modal">
     <h3>SYSTEM CONFIG</h3>
- 
+
     <div class="sect-title">IDENTITY</div>
     <label>YOUR NAME</label>
     <input id="cfgUserName" type="text" placeholder="Your name..." maxlength="24">
- 
+
     <div class="sect"></div>
     <div class="sect-title">CROSS-DEVICE SYNC (OPTIONAL)</div>
     <label>SYNC CODE &mdash; same code on every device</label>
@@ -432,7 +393,7 @@ Index · HTML
     <input id="cfgSupaUrl" type="text" placeholder="https://xxxxx.supabase.co">
     <label>SUPABASE ANON PUBLIC KEY</label>
     <input id="cfgSupaKey" type="password" placeholder="eyJhbGciOi...">
- 
+
     <div class="sect"></div>
     <div class="sect-title">ADVISORY CHANNEL (OPTIONAL)</div>
     <label>GEMINI API KEY</label>
@@ -441,7 +402,7 @@ Index · HTML
     <div id="modelSlot"></div>
     <button class="diag-btn" data-act="testapi">RUN DIAGNOSTIC</button>
     <div class="diag-out" id="diagOut"></div>
- 
+
     <div class="sync-status" id="syncStatusMsg"></div>
     <div class="modal-actions">
       <button class="danger" data-act="reset">RESET TRACKER</button>
@@ -450,7 +411,7 @@ Index · HTML
     </div>
   </div>
 </div>
- 
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ============================================================
@@ -460,15 +421,15 @@ Index · HTML
 //           user-named metric pages with six chart types,
 //           and identity personalization.
 // ============================================================
- 
+
 // ---------- CONFIG ----------
 const CFG_KEY   = 'ev-tracker-config';
 const STATE_KEY = 'ev-tracker-state-local';
 let cfg = JSON.parse(localStorage.getItem(CFG_KEY) || '{}');
 let supabaseClient = null;
- 
+
 function apiOnline(){ return !!(cfg.geminiKey && cfg.geminiKey.trim()); }
- 
+
 function initSupabase(){
   const el = document.getElementById('syncState');
   if(cfg.supaUrl && cfg.supaKey && window.supabase){
@@ -484,7 +445,7 @@ function initSupabase(){
     el.textContent = 'LOCAL';
   }
 }
- 
+
 function openSettings(){
   document.getElementById('cfgUserName').value  = (state.user && state.user.name) || '';
   document.getElementById('cfgSyncCode').value  = cfg.syncCode  || '';
@@ -499,26 +460,26 @@ function openSettings(){
   document.getElementById('settingsModal').classList.add('show');
 }
 function closeSettings(){ document.getElementById('settingsModal').classList.remove('show'); }
- 
+
 async function saveSettings(){
   const prevOnline = apiOnline();
   const newName = document.getElementById('cfgUserName').value.trim();
   const nameChanged = newName && newName !== (state.user.name || '');
   state.user.name = newName;
- 
+
   cfg.syncCode  = document.getElementById('cfgSyncCode').value.trim();
   cfg.supaUrl   = document.getElementById('cfgSupaUrl').value.trim();
   cfg.supaKey   = document.getElementById('cfgSupaKey').value.trim();
   cfg.geminiKey = document.getElementById('cfgGeminiKey').value.trim();
   localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
- 
+
   initSupabase();
   applyIdentity();
   applyApiState();
- 
+
   const statusEl = document.getElementById('syncStatusMsg');
   const hello = state.user.name ? 'Hello, ' + state.user.name + '. ' : '';
- 
+
   if(supabaseClient && cfg.syncCode){
     statusEl.textContent = 'Connecting...';
     statusEl.className = 'sync-status';
@@ -553,7 +514,7 @@ async function saveSettings(){
     statusEl.textContent = hello + 'Saved locally.';
     statusEl.className = 'sync-status ok';
   }
- 
+
   // announce an API state change in the channel
   if(apiOnline() && !prevOnline){
     pushMsg('ev', 'API ONLINE — CONNECTION ESTABLISHED. ' + (state.user.name ? 'Hello, ' + state.user.name + '. ' : '') + "What's the status?");
@@ -562,10 +523,10 @@ async function saveSettings(){
   } else if(nameChanged && apiOnline()){
     pushMsg('ev', 'Hello, ' + state.user.name + '. HUD relabeled.');
   }
- 
+
   setTimeout(closeSettings, 900);
 }
- 
+
 function resetTracker(){
   state = structuredClone(defaultState);
   chatHistory = [];
@@ -577,7 +538,7 @@ function resetTracker(){
   greet();
   closeSettings();
 }
- 
+
 // ---------- STATE ----------
 // Ships empty on purpose: whoever opens this gets a blank tracker of their own.
 const defaultState = {
@@ -589,7 +550,7 @@ const defaultState = {
   tasks: [],
   logs: []
 };
- 
+
 function migrate(raw){
   const s = structuredClone(defaultState);
   if(!raw || typeof raw !== 'object') return s;
@@ -607,7 +568,7 @@ function migrate(raw){
   })) : [];
   return s;
 }
- 
+
 function normalizeMetric(m){
   const types = ['kpi','bar','bullet','gauge','thermo','line'];
   return {
@@ -620,12 +581,12 @@ function normalizeMetric(m){
     series: Array.isArray(m.series) ? m.series.map(v=>num(v,0)) : []
   };
 }
- 
+
 function num(v, d){ const n = parseFloat(v); return isFinite(n) ? n : d; }
- 
+
 let state = migrate(JSON.parse(localStorage.getItem(STATE_KEY) || 'null'));
 let currentPageId = null;
- 
+
 function esc(str){
   return String(str == null ? '' : str)
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
@@ -633,7 +594,7 @@ function esc(str){
 }
 function uid(p){ return p + Date.now().toString(36) + Math.floor(Math.random()*1e4).toString(36); }
 function clamp01(x){ return Math.max(0, Math.min(1, x)); }
- 
+
 // Progress is derived from whatever tags the user's own objectives carry.
 // The DISPLAY NAME of each track is overridable via state.trackLabels — the tag itself never changes.
 function computeProgress(){
@@ -654,7 +615,7 @@ function computeProgress(){
   const done = state.tasks.filter(t=>t.done).length;
   return { tracks, done, total, overall: total ? Math.round((done/total)*100) : 0 };
 }
- 
+
 // ---------- IDENTITY ----------
 function applyIdentity(){
   const sub = document.getElementById('brandSub');
@@ -667,7 +628,7 @@ function applyIdentity(){
     sub.classList.remove('named');
   }
 }
- 
+
 // ---------- API STATE ----------
 function applyApiState(){
   const badge = document.getElementById('apiBadge');
@@ -685,12 +646,12 @@ function applyApiState(){
     input.placeholder = 'Channel offline.';
   }
 }
- 
+
 // ============================================================
 //  CHART RENDERERS — hand-rolled SVG, no libraries, offline-safe
 // ============================================================
 const C_TEAL='#35e6c8', C_DIM='#1c8577', C_AMBER='#ff9a3d', C_LINE='#143338', C_TXT='#5f8a86';
- 
+
 function pctOf(m){
   if(!m.target) return 0;
   return clamp01(m.value / m.target);
@@ -699,7 +660,7 @@ function fmt(n){
   if(!isFinite(n)) return '0';
   return (Math.round(n*100)/100).toLocaleString();
 }
- 
+
 function chartKPI(m){
   const p = Math.round(pctOf(m)*100);
   const diff = m.value - m.target;
@@ -710,7 +671,7 @@ function chartKPI(m){
     '<div class="kpi-delta ' + cls + '">' + arrow + ' ' + esc(fmt(Math.abs(diff))) + ' vs target ' + esc(fmt(m.target)) + ' &middot; ' + p + '%</div>' +
     '</div>';
 }
- 
+
 function chartBar(m){
   const p = Math.round(pctOf(m)*100);
   return '<div style="width:100%">' +
@@ -719,7 +680,7 @@ function chartBar(m){
     '<div class="bar-track" style="height:14px;"><div class="bar-fill" style="width:' + p + '%"></div></div>' +
     '</div>';
 }
- 
+
 function chartBullet(m){
   const W=300, H=54, x0=6, w=W-12;
   const max = Math.max(m.target, m.value) * 1.15 || 1;
@@ -736,7 +697,7 @@ function chartBullet(m){
     '<text x="' + (W-6) + '" y="50" fill="' + C_AMBER + '" font-size="10" text-anchor="end" font-family="JetBrains Mono, monospace">TARGET ' + esc(fmt(m.target)) + '</text>' +
     '</svg>';
 }
- 
+
 function gaugePt(cx, cy, r, t){
   const ang = Math.PI * (1 - clamp01(t));
   return [cx + r*Math.cos(ang), cy - r*Math.sin(ang)];
@@ -762,7 +723,7 @@ function chartGauge(m){
     '<text x="' + cx + '" y="' + (cy+46) + '" fill="' + C_TXT + '" font-size="9.5" text-anchor="middle" font-family="JetBrains Mono, monospace">' + esc(fmt(m.value)) + ' / ' + esc(fmt(m.target)) + (m.unit ? ' ' + esc(m.unit) : '') + '</text>' +
     '</svg>';
 }
- 
+
 function chartThermo(m){
   const W=300, H=132, tx=22, top=10, tubeH=76, tubeW=20, bulbR=16, bulbY=top+tubeH+10;
   const t = pctOf(m);
@@ -784,7 +745,7 @@ function chartThermo(m){
     '<text x="' + rx + '" y="' + (top+80) + '" fill="' + C_AMBER + '" font-size="11" font-family="JetBrains Mono, monospace">' + Math.round(t*100) + '% OF GOAL</text>' +
     '</svg>';
 }
- 
+
 function chartLine(m){
   const pts = (m.series && m.series.length) ? m.series : [m.value];
   const W=300, H=110, pad=8, bottom=H-22, topY=10;
@@ -817,11 +778,11 @@ function chartLine(m){
     '<text x="' + (W-pad) + '" y="' + (H-6) + '" fill="' + C_TEAL + '" font-size="9.5" text-anchor="end" font-family="JetBrains Mono, monospace">LATEST ' + esc(fmt(pts[pts.length-1])) + ' ' + esc(m.unit) + '</text>' +
     '</svg>';
 }
- 
+
 const CHARTS = { kpi: chartKPI, bar: chartBar, bullet: chartBullet, gauge: chartGauge, thermo: chartThermo, line: chartLine };
 const TYPE_NAMES = { kpi:'KPI CARD', bar:'PROGRESS BAR', bullet:'BULLET GRAPH', gauge:'GAUGE CHART', thermo:'THERMOMETER', line:'LINE GRAPH' };
 function renderChart(m){ return (CHARTS[m.type] || chartKPI)(m); }
- 
+
 // ---------- RENDER ----------
 function render(){
   // bound editable fields
@@ -830,7 +791,7 @@ function render(){
     const [grp, key] = el.dataset.bind.split('.');
     el.textContent = (state[grp] && state[grp][key]) || '';
   });
- 
+
   // objectives
   const list = document.getElementById('taskList');
   list.innerHTML = '';
@@ -848,7 +809,7 @@ function render(){
       list.appendChild(row);
     });
   }
- 
+
   // dynamic progress tracks — headers are editable display labels
   const p = computeProgress();
   const bars = document.getElementById('trackBars');
@@ -864,12 +825,12 @@ function render(){
       '<div class="bar-track"><div class="bar-fill" style="width:' + tr.pct + '%"></div></div>';
     bars.appendChild(row);
   });
- 
+
   // ring
   const C = 144.5;
   document.getElementById('ringProgress').style.strokeDashoffset = C - (p.overall/100)*C;
   document.getElementById('ringLabel').textContent = p.overall + '%';
- 
+
   // profile lines
   const pl = document.getElementById('profileList');
   pl.innerHTML = '';
@@ -886,9 +847,9 @@ function render(){
       pl.appendChild(row);
     });
   }
- 
+
   renderPageGrid();
- 
+
   // log feed
   const feed = document.getElementById('logFeed');
   feed.innerHTML = '';
@@ -904,10 +865,10 @@ function render(){
       feed.appendChild(div);
     });
   }
- 
+
   if(currentPageId) renderMetricPage();
 }
- 
+
 function renderPageGrid(){
   const g = document.getElementById('pageGrid');
   g.innerHTML = '';
@@ -926,9 +887,9 @@ function renderPageGrid(){
     g.appendChild(card);
   });
 }
- 
+
 function getPage(id){ return state.metricPages.find(p=>p.id===id) || null; }
- 
+
 function renderMetricPage(){
   const pg = getPage(currentPageId);
   if(!pg){ backToHud(); return; }
@@ -947,12 +908,12 @@ function renderMetricPage(){
     grid.appendChild(card);
   });
 }
- 
+
 // ---------- HUD DROPDOWN ----------
 // Native <select> popups are drawn by the OS and can't be themed, so chart-type
 // pickers use this instead. Keyboard + ARIA behave like a real listbox.
 let newMetricType = 'kpi';
- 
+
 function hudSelect(attrs, value, map){
   const opts = map || TYPE_NAMES;
   const keys = Object.keys(opts);
@@ -967,7 +928,7 @@ function hudSelect(attrs, value, map){
         esc(opts[k]) + '</div>').join('') +
     '</div></div>';
 }
- 
+
 function closeAllSelects(){
   document.querySelectorAll('.hs.open').forEach(hs=>{
     hs.classList.remove('open','up');
@@ -976,7 +937,7 @@ function closeAllSelects(){
     if(t) t.setAttribute('aria-expanded','false');
   });
 }
- 
+
 function openSelect(hs){
   closeAllSelects();
   hs.classList.add('open');
@@ -986,7 +947,7 @@ function openSelect(hs){
   const panelH = hs.querySelector('.hs-panel').offsetHeight || 200;
   if(r.bottom + panelH + 12 > window.innerHeight && r.top > panelH + 12) hs.classList.add('up');
 }
- 
+
 function markSelected(hs, val, label){
   hs.querySelector('.hs-cur').textContent = label;
   hs.querySelectorAll('.hs-opt').forEach(o=>{
@@ -995,7 +956,7 @@ function markSelected(hs, val, label){
     o.setAttribute('aria-selected', on);
   });
 }
- 
+
 function applySelect(hs, val){
   if(hs.dataset.hs === 'model'){
     cfg.model = val;
@@ -1014,7 +975,7 @@ function applySelect(hs, val){
     save(); renderMetricPage();
   }
 }
- 
+
 document.addEventListener('click', e=>{
   const opt = e.target.closest('.hs-opt');
   if(opt){ const hs = opt.closest('.hs'); applySelect(hs, opt.dataset.hsOpt); closeAllSelects(); return; }
@@ -1026,7 +987,7 @@ document.addEventListener('click', e=>{
   }
   closeAllSelects();
 });
- 
+
 document.addEventListener('keydown', e=>{
   const trig = e.target.closest ? e.target.closest('.hs-trigger') : null;
   if(!trig) return;
@@ -1052,10 +1013,10 @@ document.addEventListener('keydown', e=>{
     opts[i].classList.add('active');
   }
 });
- 
+
 window.addEventListener('resize', closeAllSelects);
 window.addEventListener('scroll', closeAllSelects, true);
- 
+
 // ---------- MODEL PICKER ----------
 // Google retires model names on their own schedule, so the model is configurable
 // and RUN DIAGNOSTIC repopulates this list with whatever the key can actually reach.
@@ -1071,7 +1032,7 @@ function renderModelSelect(){
   const t = slot.querySelector('.hs-trigger');
   if(t) t.style.minWidth = '100%';
 }
- 
+
 // ---------- CONNECTION DIAGNOSTIC ----------
 // Lists the models the key can reach, then sends one throwaway generate call.
 // Surfaces the raw HTTP status and error so failures stop being guesswork.
@@ -1083,7 +1044,7 @@ async function runDiagnostic(){
   out.innerHTML = '<span class="dim">Running...</span>';
   const lines = [];
   let usable = [];
- 
+
   // 1. can the key list models at all?
   try{
     const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200&key=' + encodeURIComponent(key));
@@ -1117,7 +1078,7 @@ async function runDiagnostic(){
       '<br><span class="warn">Check your connection, or an extension/firewall blocking generativelanguage.googleapis.com.</span>';
     return;
   }
- 
+
   // 2. does an actual generate call succeed?
   const model = activeModel();
   lines.push('<span class="dim">Testing ' + esc(model) + '...</span>');
@@ -1151,12 +1112,12 @@ async function runDiagnostic(){
   }
   out.innerHTML = lines.join('<br>');
 }
- 
+
 function renderNewTypeSelect(){
   const slot = document.getElementById('newTypeSlot');
   if(slot) slot.innerHTML = hudSelect('data-hs="newtype"', newMetricType);
 }
- 
+
 function metricCardInner(m){
   const isLine = m.type === 'line';
   return '<div class="mtitle"><span class="edit" contenteditable="true" data-mfield="label" data-id="' + esc(m.id) + '" data-ph="METRIC NAME">' + esc(m.label) + '</span>' +
@@ -1172,7 +1133,7 @@ function metricCardInner(m){
       hudSelect('data-hs="mtype" data-id="' + esc(m.id) + '"', m.type) +
     '</div>';
 }
- 
+
 function openPage(id){
   currentPageId = id;
   document.getElementById('hudView').style.display = 'none';
@@ -1188,7 +1149,7 @@ function backToHud(){
   render();
   window.scrollTo(0,0);
 }
- 
+
 // ============================================================
 //  XLSX EXPORT — real .xlsx built in-page.
 //  Store-only ZIP + SpreadsheetML. No libraries, works offline.
@@ -1222,7 +1183,7 @@ function zipStore(files){
     lv.setUint16(26, name.length, true); lv.setUint16(28, 0, true);
     lh.set(name, 30);
     locals.push(lh, data);
- 
+
     const ch = new Uint8Array(46 + name.length);
     const cv = new DataView(ch.buffer);
     cv.setUint32(0, 0x02014b50, true); cv.setUint16(4, 20, true); cv.setUint16(6, 20, true);
@@ -1233,7 +1194,7 @@ function zipStore(files){
     cv.setUint32(42, offset, true);
     ch.set(name, 46);
     centrals.push(ch);
- 
+
     offset += lh.length + data.length;
   });
   const cdSize = centrals.reduce((a,b)=>a+b.length, 0);
@@ -1332,7 +1293,7 @@ function exportPageXlsx(){
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(()=>URL.revokeObjectURL(url), 4000);
 }
- 
+
 // ---------- ACTIONS (delegated) ----------
 document.addEventListener('click', e=>{
   const el = e.target.closest('[data-act]');
@@ -1361,7 +1322,7 @@ document.addEventListener('click', e=>{
     case 'reset':       resetTracker(); break;
   }
 });
- 
+
 // Enter-key submits
 document.addEventListener('keydown', e=>{
   if(e.key !== 'Enter') return;
@@ -1376,7 +1337,7 @@ document.addEventListener('keydown', e=>{
     case 'chatInput': sendChat(); break;
   }
 });
- 
+
 // bound editable fields (mission / profile headline) -> state
 document.querySelectorAll('[data-bind]').forEach(el=>{
   el.addEventListener('blur', ()=>{
@@ -1388,7 +1349,7 @@ document.querySelectorAll('[data-bind]').forEach(el=>{
     if(ev.key === 'Enter'){ ev.preventDefault(); el.blur(); }
   });
 });
- 
+
 // editable TRACK HEADERS + editable METRIC NAMES (delegated, since both are re-rendered)
 document.addEventListener('focusout', e=>{
   const el = e.target;
@@ -1413,7 +1374,7 @@ document.addEventListener('keydown', e=>{
     e.preventDefault(); el.blur();
   }
 });
- 
+
 // live metric value edits — patch just the chart so the input keeps focus
 document.addEventListener('input', e=>{
   const el = e.target;
@@ -1462,7 +1423,7 @@ function removeProfileLine(id){
   state.profile.lines = state.profile.lines.filter(l=>l.id!==id);
   save(); render();
 }
- 
+
 // ---------- METRIC PAGES ----------
 function addPage(){
   const input = document.getElementById('newPageInput');
@@ -1507,7 +1468,7 @@ function removeMetric(id){
   pg.metrics = pg.metrics.filter(m=>m.id!==id);
   save(); renderMetricPage();
 }
- 
+
 function stamp(){
   return new Date().toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
 }
@@ -1523,7 +1484,7 @@ function deleteLog(id){
   state.logs = state.logs.filter(l=>l.id!==id);
   save(); render();
 }
- 
+
 function persistLocal(){ localStorage.setItem(STATE_KEY, JSON.stringify(state)); }
 async function save(){
   persistLocal();
@@ -1534,20 +1495,20 @@ async function save(){
     }catch(e){ console.warn('sync failed', e); }
   }
 }
- 
+
 function tickClock(){
   document.getElementById('dateLine').textContent =
     new Date().toLocaleString([], {weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
 }
 setInterval(tickClock, 30000);
 tickClock();
- 
+
 // ============================================================
 //  ADVISORY CHANNEL
 // ============================================================
 const chatWindow = document.getElementById('chatWindow');
 let chatHistory = [];
- 
+
 function pushMsg(role, text, offline){
   const div = document.createElement('div');
   div.className = 'msg ' + (role==='user' ? 'user' : 'ev' + (offline ? ' offline' : ''));
@@ -1556,7 +1517,7 @@ function pushMsg(role, text, offline){
   chatWindow.appendChild(div);
   chatWindow.scrollTop = chatWindow.scrollHeight;
 }
- 
+
 const TOOL_DECLARATIONS = [
   { name:"update_task",
     description:"Mark one of the user's objectives complete or incomplete. Use whenever the user says they finished something or wants to un-check it.",
@@ -1633,7 +1594,7 @@ const TOOL_DECLARATIONS = [
       metric:{type:"string", description:"Name or id of the metric"}
     }, required:["page","metric"] } }
 ];
- 
+
 function findPage(ref){
   if(!ref) return null;
   const r = String(ref).toLowerCase();
@@ -1649,7 +1610,7 @@ function findMetric(pg, ref){
          pg.metrics.find(m=>m.label.toLowerCase().includes(r)) || null;
 }
 function refreshAll(){ save(); if(currentPageId) renderMetricPage(); else render(); }
- 
+
 const toolFunctions = {
   update_task(a){
     const t = state.tasks.find(t=>t.id===a.task_id);
@@ -1740,7 +1701,7 @@ const toolFunctions = {
     return { success:true, removed:m.label };
   }
 };
- 
+
 function buildSystemPrompt(){
   const p = computeProgress();
   const tracks = p.tracks.length
@@ -1765,7 +1726,7 @@ function buildSystemPrompt(){
       ).join('\n')
     : 'No metric pages yet.';
   const who = (state.user && state.user.name) ? state.user.name : '';
- 
+
   return `You are E.V., a sharp, quick-witted advisory AI embedded in ${who ? who + "'s" : "the user's"} personal status tracker. Talk like a genuinely smart, capable person who's in their corner — direct, a little dry-witted, warm underneath. Never use bracketed system-diagnostic voice like "[SCANNING...]" — that's a bit, not a personality. Keep replies brief unless asked for more.
 ${who ? `The user's name is ${who}. Use it sparingly and naturally.` : ''}
 You do not know anything about the user beyond what appears below. Do not invent a school, employer, career, or background for them. If the tracker is empty, your first job is to ask what they're working toward, then use set_mission, add_task, and update_profile to set it up for them instead of making them type it all in.
@@ -1787,7 +1748,7 @@ ${taskSummary}
 RECENT LOG:
 ${logSummary}`;
 }
- 
+
 async function callGemini(contents){
   const res = await fetch(
     'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(activeModel()) +
@@ -1801,7 +1762,7 @@ async function callGemini(contents){
     });
   return res.json();
 }
- 
+
 async function sendChat(){
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
@@ -1813,13 +1774,13 @@ async function sendChat(){
   input.value = '';
   pushMsg('user', text);
   chatHistory.push({ role:'user', parts:[{ text }] });
- 
+
   const typing = document.createElement('div');
   typing.className = 'typing'; typing.id = 'typingIndicator';
   typing.textContent = 'E.V. is thinking...';
   chatWindow.appendChild(typing);
   chatWindow.scrollTop = chatWindow.scrollHeight;
- 
+
   try{
     let data = await callGemini(chatHistory);
     let parts = data?.candidates?.[0]?.content?.parts || [];
@@ -1855,7 +1816,7 @@ async function sendChat(){
     console.error(e);
   }
 }
- 
+
 function greet(){
   const nm = (state.user && state.user.name || '').trim();
   const hello = nm ? 'Hello, ' + nm + '. ' : '';
@@ -1867,7 +1828,7 @@ function greet(){
   pushMsg('ev', 'API ONLINE — CONNECTION ESTABLISHED. ' + hello +
     (blank ? "What are you working toward?" : "What's the status?"));
 }
- 
+
 // ---------- INIT ----------
 initSupabase();
 applyIdentity();
@@ -1875,11 +1836,10 @@ applyApiState();
 renderNewTypeSelect();
 render();
 greet();
- 
+
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=> navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 }
 </script>
 </body>
 </html>
- 
