@@ -440,6 +440,7 @@
       <div class="sect"></div>
       <div class="sect-title">ACCOUNT</div>
       <div class="hint-box" id="authState">Not signed in.</div>
+      <div class="hint-box" id="authUrlNote" style="display:none;"></div>
       <div id="authForm">
         <label>EMAIL</label>
         <input id="cfgAuthEmail" type="email" placeholder="you@example.com" autocomplete="username">
@@ -543,6 +544,14 @@ function renderAuthState(){
       : 'Not signed in. Connect Supabase under the <b class="warn">SYNC</b> tab first — accounts run on it.';
     form.style.display = supabaseClient ? '' : 'none';
     out.style.display  = 'none';
+    const urlNote = document.getElementById('authUrlNote');
+    if(supabaseClient){
+      urlNote.style.display = '';
+      urlNote.innerHTML = 'Supabase must be told where this app lives, or confirmation links 404. Set <b class="ok">Site URL</b> to<br><b class="ok">' +
+        esc(location.origin + location.pathname) + '</b><br>under Authentication → URL Configuration.';
+    } else {
+      urlNote.style.display = 'none';
+    }
     note.innerHTML = 'Signed out — anyone who knows or guesses this code can read and overwrite your data. Sign in on the IDENTITY tab for real per-account isolation.';
   }
   updateSyncBadge();
@@ -572,12 +581,16 @@ async function doAuth(mode){
   if(pass.length < 6){ set('Password must be at least 6 characters.', 'err'); return; }
   set('Working...');
   try{
+    // Without emailRedirectTo the confirmation link goes to Supabase's default
+    // Site URL (http://localhost:3000), which is dead on a hosted page.
+    const redirectTo = location.origin + location.pathname;
     const { data, error } = mode === 'up'
-      ? await supabaseClient.auth.signUp({ email, password: pass })
+      ? await supabaseClient.auth.signUp({ email, password: pass, options: { emailRedirectTo: redirectTo } })
       : await supabaseClient.auth.signInWithPassword({ email, password: pass });
     if(error){ set(error.message, 'err'); return; }
     if(mode === 'up' && !data.session){
-      set('Account created. Confirm the email Supabase just sent, then SIGN IN.', 'ok');
+      set('Account created — confirmation email sent. If that link lands on "site can\'t be reached", set Site URL to ' +
+          redirectTo + ' under Authentication → URL Configuration in Supabase, or switch off "Confirm email" under Authentication → Providers → Email.', 'ok');
       return;
     }
     authUser = data.user;
@@ -1358,11 +1371,46 @@ async function runDiagnostic(){
       lines.push('<b class="bad">GENERATE FAILED &mdash; HTTP ' + r.status + '</b>');
       lines.push('<span class="bad">' + esc(e.status || '') + '</span> ' + esc(e.message || 'Unknown error'));
       if(r.status === 429){
-        lines.push('<span class="warn">Quota is exhausted for this project. Note that quota is per PROJECT, not per key &mdash; a new key in the same project shares it. If this persists past a day, the project likely has a zero free-tier allowance for this model rather than a used-up daily one; enable billing or use a different project.</span>');
+        lines.push('<span class="warn">Quota exhausted for this project. Quota is per PROJECT, not per key &mdash; another key on the same project shares it.</span>');
       } else if(r.status === 404){
-        lines.push('<span class="warn">This model name does not exist for this key. Pick another from the MODEL list above and re-run.</span>');
+        lines.push('<span class="warn">This model name does not exist for this key.</span>');
       } else if(r.status === 403){
         lines.push('<span class="warn">Key rejected for generation &mdash; check API restrictions on the key, or whether it is HTTP-referrer-locked to a different domain than the one serving this page.</span>');
+      }
+
+      // Rather than guess which model your key is allowed to use, ping each one
+      // it can list and report what actually comes back.
+      const others = usable.filter(n => n !== model).slice(0, 8);
+      if(others.length && [400,403,404,429].indexOf(r.status) >= 0){
+        lines.push('', '<b class="dim">SWEEPING EVERY MODEL THIS KEY CAN LIST...</b>');
+        out.innerHTML = lines.join('<br>');
+        let winner = null;
+        for(const m of others){
+          let mark;
+          try{
+            const rr = await gFetch('models/' + encodeURIComponent(m) + ':generateContent',
+              { method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({ contents:[{ role:'user', parts:[{ text:'ping' }] }],
+                  generationConfig:{ maxOutputTokens:1 } }) }, key);
+            if(rr.ok){ mark = '<span class="ok">OK</span>'; if(!winner) winner = m; }
+            else {
+              const jj = await rr.json().catch(()=>({}));
+              mark = '<span class="bad">HTTP ' + rr.status + '</span> <span class="dim">' + esc((jj.error||{}).status || '') + '</span>';
+            }
+          }catch(err){ mark = '<span class="bad">network</span>'; }
+          lines.push('<span class="dim">' + esc(m) + '</span> &rarr; ' + mark);
+          out.innerHTML = lines.join('<br>');
+        }
+        if(winner){
+          cfg.model = winner;
+          renderModelSelect();
+          lines.push('', '<b class="ok">USABLE MODEL FOUND</b>',
+            '<span class="ok">Switched to ' + esc(winner) + '. Hit SAVE &amp; CONNECT to apply it.</span>');
+        } else {
+          lines.push('', '<b class="bad">NO USABLE MODEL ON THIS KEY</b>',
+            '<span class="warn">Every model this key can list returned an error. If they are all 429, the project has no remaining allowance &mdash; not a daily reset you can wait out.</span>',
+            '<span class="dim">Check your real per-model limits at ai.dev/rate-limit. A limit of 0 means this project was never granted free-tier access for that model. Enabling billing moves the project to Tier 1; a project under a different Google account gets its own allowance.</span>');
+        }
       }
     }
   }catch(e){
