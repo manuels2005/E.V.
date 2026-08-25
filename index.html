@@ -56,6 +56,7 @@
   }
   .header .brand{ font-family:'Share Tech Mono', monospace; font-size: 20px; letter-spacing: 3px; color: var(--teal); text-shadow: var(--glow); }
   .header .brand span{ color: var(--text-dim); font-size:11px; letter-spacing:1.5px; display:block; margin-top:2px;}
+  .header .brand span.named{ color: var(--amber); }
   .header .right{ display:flex; align-items:center; gap:14px; }
   .header .clock{ text-align:right; font-size:11px; color: var(--text-dim); letter-spacing:1px; }
   .header .clock b{ color: var(--teal); font-size:13px; }
@@ -97,10 +98,13 @@
   .mission-sub{ font-size:12px; color:var(--text-dim); margin-bottom:14px; letter-spacing:.5px;}
   .bar-row{ margin-bottom: 10px; }
   .bar-row .label-row{ display:flex; justify-content:space-between; font-size:11px; color:var(--text-dim); margin-bottom:4px; letter-spacing:1px; gap:10px; }
+  .bar-row .track-label{ color: var(--text); }
+  .bar-row .track-tag{ color: var(--text-dim); opacity:.75; font-size:9.5px; margin-left:6px; letter-spacing:1px; }
   .bar-track{ height:8px; background:var(--panel-2); border:1px solid var(--line); position:relative; overflow:hidden; }
   .bar-fill{ height:100%; background: linear-gradient(90deg, var(--teal-dim), var(--teal)); box-shadow: var(--glow); transition: width .5s ease; }
   .next-up{ margin-top:16px; padding:10px 12px; border-left:2px solid var(--amber); background:rgba(255,154,61,0.06); font-size:12.5px; }
   .next-up b{ color:var(--amber); letter-spacing:1px; }
+  .hint{ font-size:10px; color:var(--text-dim); opacity:.7; margin-top:10px; font-style:italic; }
   .metric-label{ font-size:11px; color:var(--text-dim); letter-spacing:1px; }
   .metric-value{ font-family:'Share Tech Mono'; font-size:26px; color:var(--teal); text-shadow:var(--glow); margin:2px 0 14px; }
   .log-input-row{ display:flex; gap:8px; margin-bottom:12px; }
@@ -108,26 +112,79 @@
   .log-input-row input:focus{ border-color: var(--teal-dim); box-shadow: 0 0 0 1px var(--teal-dim); }
   .log-input-row button, .btn{ background: var(--teal-dim); color:#04120f; border:none; font-family:'Share Tech Mono'; letter-spacing:1px; padding:8px 14px; cursor:pointer; font-size:12px; transition:.15s; }
   .log-input-row button:hover, .btn:hover{ background:var(--teal); box-shadow:var(--glow); }
+  .btn:disabled{ background:var(--line); color:var(--text-dim); cursor:not-allowed; box-shadow:none; }
   .log-feed{ max-height: 190px; overflow-y:auto; font-size:12.5px; }
   .log-entry{ padding:6px 0; border-bottom: 1px dashed var(--line); display:flex; gap:8px;}
   .log-entry .ts{ color:var(--text-dim); font-size:10.5px; white-space:nowrap; margin-top:1px;}
   .empty-note{ color:var(--text-dim); font-size:12px; font-style:italic; line-height:1.6; }
   .add-row{ display:flex; gap:6px; margin-bottom:10px; }
-  .add-row input{ background: var(--panel-2); border:1px solid var(--line); color:var(--text); font-family:'JetBrains Mono'; font-size:12px; padding:7px 9px; outline:none; min-width:0; }
+  .add-row input, .add-row select{ background: var(--panel-2); border:1px solid var(--line); color:var(--text); font-family:'JetBrains Mono'; font-size:12px; padding:7px 9px; outline:none; min-width:0; }
   .add-row input.grow{ flex:1; }
   .add-row input.tagin{ width:74px; text-transform:uppercase; }
-  .add-row input:focus{ border-color: var(--teal-dim); }
+  .add-row input:focus, .add-row select:focus{ border-color: var(--teal-dim); }
   .add-row button{ background: var(--teal-dim); color:#04120f; border:none; font-family:'Share Tech Mono'; letter-spacing:1px; padding:7px 12px; cursor:pointer; font-size:11px; flex:none; }
   .add-row button:hover{ background:var(--teal); }
+
+  /* ---------- METRIC MODULES ---------- */
+  .page-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); gap:12px; }
+  .page-card{ border:1px solid var(--line); background:var(--panel-2); padding:12px 14px 14px; position:relative; }
+  .page-card:hover{ border-color: var(--teal-dim); }
+  .page-card .pname{ font-family:'Share Tech Mono'; font-size:15px; color:var(--teal); letter-spacing:2px; margin-bottom:2px; word-break:break-word; }
+  .page-card .pmeta{ font-size:10.5px; color:var(--text-dim); letter-spacing:1px; margin-bottom:12px; }
+  .page-card .load-btn{ width:100%; background:transparent; border:1px solid var(--teal-dim); color:var(--teal);
+    font-family:'Share Tech Mono'; letter-spacing:2px; font-size:11px; padding:8px; cursor:pointer; transition:.15s; }
+  .page-card .load-btn:hover{ background:var(--teal-dim); color:#04120f; box-shadow:var(--glow); }
+  .page-card .pdel{ position:absolute; top:8px; right:10px; color:var(--text-dim); cursor:pointer; font-size:11px; }
+  .page-card .pdel:hover{ color:var(--red); }
+
+  .view-header{ display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    border:1px solid var(--line-bright); background:linear-gradient(180deg,var(--panel-2),var(--panel));
+    padding:14px 20px; margin-bottom:14px;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 14px 100%, 0 calc(100% - 14px)); }
+  .view-header .vtitle{ font-family:'Share Tech Mono'; font-size:19px; letter-spacing:3px; color:var(--teal); text-shadow:var(--glow); }
+  .view-header .vsub{ font-size:10.5px; color:var(--text-dim); letter-spacing:2px; display:block; margin-top:2px; }
+  .back-btn{ background:transparent; border:1px solid var(--line-bright); color:var(--text-dim);
+    font-family:'Share Tech Mono'; letter-spacing:2px; font-size:11px; padding:8px 14px; cursor:pointer; }
+  .back-btn:hover{ color:var(--teal); border-color:var(--teal-dim); }
+
+  .metric-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(290px,1fr)); gap:14px; }
+  .metric-card{ border:1px solid var(--line); background:var(--panel-2); padding:12px 14px 14px; position:relative; }
+  .metric-card::before{ content:""; position:absolute; top:-1px; left:-1px; width:9px; height:9px; border:1px solid var(--teal-dim); border-right:none; border-bottom:none; }
+  .metric-card .mtitle{ font-size:11px; letter-spacing:2px; color:var(--amber); margin-bottom:2px; display:flex; justify-content:space-between; gap:8px; }
+  .metric-card .mtitle .del{ margin-left:0; }
+  .metric-card .mkind{ font-size:9.5px; color:var(--text-dim); letter-spacing:2px; margin-bottom:10px; }
+  .chart-box{ height:130px; display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
+  .chart-box svg{ width:100%; height:100%; display:block; }
+  .kpi-wrap{ text-align:left; width:100%; }
+  .kpi-num{ font-family:'Share Tech Mono'; font-size:40px; line-height:1; color:var(--teal); text-shadow:var(--glow); }
+  .kpi-num small{ font-size:15px; color:var(--text-dim); text-shadow:none; margin-left:4px; }
+  .kpi-delta{ font-size:11px; letter-spacing:1px; margin-top:8px; color:var(--text-dim); }
+  .kpi-delta.up{ color:var(--teal); } .kpi-delta.down{ color:var(--amber); }
+  .metric-edit{ display:flex; gap:6px; align-items:center; flex-wrap:wrap; border-top:1px dashed var(--line); padding-top:10px; }
+  .metric-edit input[type=number], .metric-edit input[type=text]{ width:72px; background:var(--bg); border:1px solid var(--line);
+    color:var(--text); font-family:'JetBrains Mono'; font-size:11.5px; padding:5px 6px; outline:none; }
+  .metric-edit input.series{ width:100%; }
+  .metric-edit input:focus{ border-color:var(--teal-dim); }
+  .metric-edit select{ background:var(--bg); border:1px solid var(--line); color:var(--text-dim);
+    font-family:'JetBrains Mono'; font-size:11px; padding:5px 4px; outline:none; }
+  .metric-edit .lbl{ font-size:10px; color:var(--text-dim); letter-spacing:1px; }
+
+  /* ---------- ADVISORY CHANNEL ---------- */
   .ai-panel{ grid-column: 1 / -1; }
+  .status-badge{ font-family:'Share Tech Mono'; font-size:10px; letter-spacing:2px; padding:2px 8px; border:1px solid; white-space:nowrap; }
+  .status-badge.off{ color:var(--red); border-color:var(--red); background:rgba(255,87,87,0.08); }
+  .status-badge.on{ color:var(--teal); border-color:var(--teal-dim); background:rgba(53,230,200,0.08); }
   .chat-window{ max-height: 260px; overflow-y:auto; padding: 4px 4px 10px; margin-bottom:10px; display:flex; flex-direction:column; gap:10px; }
   .msg{ font-size:13px; line-height:1.5; max-width:80%; padding:9px 12px; white-space:pre-wrap; }
   .msg.user{ align-self:flex-end; background: var(--panel-2); border:1px solid var(--line); color:var(--text); }
   .msg.ev{ align-self:flex-start; background: rgba(53,230,200,0.06); border:1px solid var(--line-bright); color:var(--text); }
+  .msg.ev.offline{ background: rgba(255,87,87,0.05); border-color: rgba(255,87,87,0.4); }
   .msg.ev .who{ color:var(--teal); font-family:'Share Tech Mono'; font-size:10px; letter-spacing:2px; display:block; margin-bottom:4px; }
+  .msg.ev.offline .who{ color:var(--red); }
   .chat-input-row{ display:flex; gap:8px; }
   .chat-input-row input{ flex:1; background:var(--panel-2); border:1px solid var(--line); color:var(--text); font-family:'JetBrains Mono'; padding:10px 12px; outline:none; font-size:13px;}
   .chat-input-row input:focus{ border-color:var(--teal-dim); }
+  .chat-input-row input:disabled{ color:var(--text-dim); cursor:not-allowed; }
   .typing{ color:var(--text-dim); font-size:12px; font-style:italic; }
   ::-webkit-scrollbar{ width:6px; }
   ::-webkit-scrollbar-thumb{ background: var(--line-bright); }
@@ -153,10 +210,12 @@
 </style>
 </head>
 <body>
-<div class="frame">
+
+<!-- ============ MAIN HUD VIEW ============ -->
+<div class="frame" id="hudView">
   <div class="header">
     <div>
-      <div class="brand">E.V. <span>USER H.U.D.</span></div>
+      <div class="brand">E.V. <span id="brandSub">USER H.U.D.</span></div>
     </div>
     <div class="right">
       <div class="clock"><div id="dateLine">--</div>SYSTEM <b id="syncState">LOCAL</b></div>
@@ -169,7 +228,7 @@
         </svg>
         <div class="ring-label" id="ringLabel">0%</div>
       </div>
-      <div class="gear" onclick="openSettings()" title="Settings">&#9881;</div>
+      <div class="gear" data-act="opencfg" title="Settings">&#9881;</div>
     </div>
   </div>
 
@@ -177,9 +236,9 @@
     <div class="panel">
       <div class="panel-title">OBJECTIVES <span class="dot"></span></div>
       <div class="add-row">
-        <input id="newTaskInput" class="grow" type="text" placeholder="Add an objective..." onkeydown="if(event.key==='Enter')addTaskManual()"/>
-        <input id="newTaskTag" class="tagin" type="text" placeholder="TAG" maxlength="10" onkeydown="if(event.key==='Enter')addTaskManual()"/>
-        <button onclick="addTaskManual()">ADD</button>
+        <input id="newTaskInput" class="grow" type="text" placeholder="Add an objective..."/>
+        <input id="newTaskTag" class="tagin" type="text" placeholder="TAG" maxlength="10"/>
+        <button data-act="addtask">ADD</button>
       </div>
       <div id="taskList"></div>
     </div>
@@ -190,6 +249,7 @@
       <div class="mission-sub edit" contenteditable="true" data-bind="mission.sub" data-ph="Add a short description of the goal"></div>
       <div id="trackBars"></div>
       <div class="next-up"><b>NEXT UP:</b> <span class="edit" contenteditable="true" data-bind="mission.next" data-ph="What's the very next action?"></span></div>
+      <div class="hint" id="trackHint"></div>
     </div>
 
     <div class="panel">
@@ -197,10 +257,22 @@
       <div class="metric-label edit" contenteditable="true" data-bind="profile.metricLabel" data-ph="KEY METRIC"></div>
       <div class="metric-value edit" contenteditable="true" data-bind="profile.metricValue" data-ph="--"></div>
       <div class="add-row">
-        <input id="newProfileInput" class="grow" type="text" placeholder="Add a profile line..." onkeydown="if(event.key==='Enter')addProfileLine()"/>
-        <button onclick="addProfileLine()">ADD</button>
+        <input id="newProfileInput" class="grow" type="text" placeholder="Add a profile line..."/>
+        <button data-act="addprofile">ADD</button>
       </div>
       <div id="profileList"></div>
+    </div>
+  </div>
+
+  <!-- METRIC MODULES -->
+  <div class="grid" style="grid-template-columns:1fr;">
+    <div class="panel">
+      <div class="panel-title">METRIC MODULES <span class="dot"></span></div>
+      <div class="add-row">
+        <input id="newPageInput" class="grow" type="text" placeholder="Name a new metric page... e.g. FITNESS, FINANCE, STUDY"/>
+        <button data-act="addpage">CREATE PAGE</button>
+      </div>
+      <div class="page-grid" id="pageGrid"></div>
     </div>
   </div>
 
@@ -208,8 +280,8 @@
     <div class="panel">
       <div class="panel-title">LOG ENTRY <span class="dot"></span></div>
       <div class="log-input-row">
-        <input id="logInput" type="text" placeholder="Log an update... e.g. 'Finished the first project notebook'" onkeydown="if(event.key==='Enter')addLog()"/>
-        <button onclick="addLog()">LOG</button>
+        <input id="logInput" type="text" placeholder="Log an update... e.g. 'Finished the first project notebook'"/>
+        <button data-act="addlog">LOG</button>
       </div>
       <div class="log-feed" id="logFeed"></div>
     </div>
@@ -217,16 +289,53 @@
 
   <div class="grid" style="grid-template-columns:1fr;">
     <div class="panel ai-panel">
-      <div class="panel-title">E.V. &mdash; ADVISORY CHANNEL <span class="dot"></span></div>
+      <div class="panel-title">
+        <span>E.V. &mdash; ADVISORY CHANNEL</span>
+        <span style="display:flex; align-items:center; gap:10px;">
+          <span class="status-badge off" id="apiBadge">API OFFLINE</span>
+          <span class="dot"></span>
+        </span>
+      </div>
       <div class="chat-window" id="chatWindow"></div>
       <div class="chat-input-row">
-        <input id="chatInput" type="text" placeholder="Ask E.V. anything about your goals, tasks, or strategy..." onkeydown="if(event.key==='Enter')sendChat()"/>
-        <button class="btn" onclick="sendChat()">SEND</button>
+        <input id="chatInput" type="text" placeholder="Ask E.V. anything about your goals, tasks, or strategy..."/>
+        <button class="btn" id="chatSendBtn" data-act="sendchat">SEND</button>
       </div>
     </div>
   </div>
 
-  <div class="footer-note">E.V. STATUS TRACKER v2.0 &mdash; installable PWA</div>
+  <div class="footer-note">E.V. STATUS TRACKER v3.0 &mdash; installable PWA</div>
+</div>
+
+<!-- ============ METRIC PAGE VIEW ============ -->
+<div class="frame" id="metricView" style="display:none;">
+  <div class="view-header">
+    <button class="back-btn" data-act="backhud">&#9666; BACK TO HUD</button>
+    <div>
+      <div class="vtitle" id="mvTitle">MODULE</div>
+      <span class="vsub" id="mvSub">METRIC MODULE</span>
+    </div>
+  </div>
+  <div class="panel" style="margin-bottom:14px;">
+    <div class="panel-title">ADD METRIC <span class="dot"></span></div>
+    <div class="add-row" style="flex-wrap:wrap;">
+      <input id="newMetricLabel" class="grow" type="text" placeholder="Metric name... e.g. Bench Press, Cash Saved, Study Hours"/>
+      <select id="newMetricType">
+        <option value="kpi">KPI CARD</option>
+        <option value="bar">PROGRESS BAR</option>
+        <option value="bullet">BULLET GRAPH</option>
+        <option value="gauge">GAUGE CHART</option>
+        <option value="thermo">THERMOMETER</option>
+        <option value="line">LINE GRAPH</option>
+      </select>
+      <input id="newMetricValue" type="number" placeholder="VALUE" style="width:88px;"/>
+      <input id="newMetricTarget" type="number" placeholder="TARGET" style="width:88px;"/>
+      <input id="newMetricUnit" type="text" placeholder="UNIT" style="width:70px;" maxlength="8"/>
+      <button data-act="addmetric">ADD</button>
+    </div>
+  </div>
+  <div class="metric-grid" id="metricGrid"></div>
+  <div class="footer-note" style="margin-top:16px;">Values are yours to set &mdash; edit any card in place, or tell E.V. to update it.</div>
 </div>
 
 <!-- SETTINGS MODAL -->
@@ -235,6 +344,11 @@
     <h3>SYSTEM CONFIG</h3>
     <p>Everything in this tracker is yours to define. Objectives, mission, and profile are edited directly on the dashboard &mdash; click any field to type in it.</p>
 
+    <div class="sect-title">IDENTITY</div>
+    <label>YOUR NAME &mdash; personalizes the HUD header and E.V.'s greeting</label>
+    <input id="cfgUserName" type="text" placeholder="e.g. Manuel" maxlength="24">
+
+    <div class="sect"></div>
     <div class="sect-title">CROSS-DEVICE SYNC (OPTIONAL)</div>
     <p style="margin-top:6px;">Connect a free Supabase project so this tracker syncs across every device. Same sync code + keys on each device = same data.</p>
     <label>SYNC CODE (pick anything, use it on all devices)</label>
@@ -246,14 +360,15 @@
 
     <div class="sect"></div>
     <div class="sect-title">ADVISORY CHANNEL (OPTIONAL)</div>
+    <p style="margin-top:6px;">Leave blank and the channel reports <b>API OFFLINE</b>. Everything else on the HUD works without it.</p>
     <label>GEMINI API KEY &mdash; enables the E.V. chat</label>
     <input id="cfgGeminiKey" type="password" placeholder="AIza...">
 
     <div class="sync-status" id="syncStatusMsg"></div>
     <div class="modal-actions">
-      <button class="danger" onclick="resetTracker()">RESET TRACKER</button>
-      <button onclick="closeSettings()">CANCEL</button>
-      <button class="primary" onclick="saveSettings()">SAVE &amp; CONNECT</button>
+      <button class="danger" data-act="reset">RESET TRACKER</button>
+      <button data-act="closecfg">CANCEL</button>
+      <button class="primary" data-act="savecfg">SAVE &amp; CONNECT</button>
     </div>
   </div>
 </div>
@@ -261,51 +376,68 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ============================================================
-//  E.V. STATUS TRACKER  —  generic, fully user-defined build
-//  No content is hardcoded to any person, school, or employer.
+//  E.V. STATUS TRACKER v3.0
+//  Generic build — nothing is hardcoded to any person or school.
+//  v3 adds: editable track labels, API online/offline state,
+//           user-named metric pages with six chart types,
+//           and identity personalization.
 // ============================================================
 
 // ---------- CONFIG ----------
-const CFG_KEY = 'ev-tracker-config';
+const CFG_KEY   = 'ev-tracker-config';
 const STATE_KEY = 'ev-tracker-state-local';
 let cfg = JSON.parse(localStorage.getItem(CFG_KEY) || '{}');
 let supabaseClient = null;
 
+function apiOnline(){ return !!(cfg.geminiKey && cfg.geminiKey.trim()); }
+
 function initSupabase(){
+  const el = document.getElementById('syncState');
   if(cfg.supaUrl && cfg.supaKey && window.supabase){
     try{
       supabaseClient = window.supabase.createClient(cfg.supaUrl, cfg.supaKey);
-      document.getElementById('syncState').textContent = 'CLOUD';
+      el.textContent = 'CLOUD';
     }catch(e){
       supabaseClient = null;
-      document.getElementById('syncState').textContent = 'LOCAL';
+      el.textContent = 'LOCAL';
     }
   } else {
     supabaseClient = null;
-    document.getElementById('syncState').textContent = 'LOCAL';
+    el.textContent = 'LOCAL';
   }
 }
 
 function openSettings(){
-  document.getElementById('cfgSyncCode').value = cfg.syncCode || '';
-  document.getElementById('cfgSupaUrl').value = cfg.supaUrl || '';
-  document.getElementById('cfgSupaKey').value = cfg.supaKey || '';
+  document.getElementById('cfgUserName').value  = (state.user && state.user.name) || '';
+  document.getElementById('cfgSyncCode').value  = cfg.syncCode  || '';
+  document.getElementById('cfgSupaUrl').value   = cfg.supaUrl   || '';
+  document.getElementById('cfgSupaKey').value   = cfg.supaKey   || '';
   document.getElementById('cfgGeminiKey').value = cfg.geminiKey || '';
-  document.getElementById('syncStatusMsg').textContent = '';
-  document.getElementById('syncStatusMsg').className = 'sync-status';
+  const s = document.getElementById('syncStatusMsg');
+  s.textContent = ''; s.className = 'sync-status';
   document.getElementById('settingsModal').classList.add('show');
 }
 function closeSettings(){ document.getElementById('settingsModal').classList.remove('show'); }
 
 async function saveSettings(){
-  cfg.syncCode   = document.getElementById('cfgSyncCode').value.trim();
-  cfg.supaUrl    = document.getElementById('cfgSupaUrl').value.trim();
-  cfg.supaKey    = document.getElementById('cfgSupaKey').value.trim();
-  cfg.geminiKey  = document.getElementById('cfgGeminiKey').value.trim();
+  const prevOnline = apiOnline();
+  const newName = document.getElementById('cfgUserName').value.trim();
+  const nameChanged = newName && newName !== (state.user.name || '');
+  state.user.name = newName;
+
+  cfg.syncCode  = document.getElementById('cfgSyncCode').value.trim();
+  cfg.supaUrl   = document.getElementById('cfgSupaUrl').value.trim();
+  cfg.supaKey   = document.getElementById('cfgSupaKey').value.trim();
+  cfg.geminiKey = document.getElementById('cfgGeminiKey').value.trim();
   localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+
   initSupabase();
+  applyIdentity();
+  applyApiState();
 
   const statusEl = document.getElementById('syncStatusMsg');
+  const hello = state.user.name ? 'Hello, ' + state.user.name + '. ' : '';
+
   if(supabaseClient && cfg.syncCode){
     statusEl.textContent = 'Connecting...';
     statusEl.className = 'sync-status';
@@ -318,13 +450,17 @@ async function saveSettings(){
         return;
       }
       if(data && data.state){
-        state = migrate(data.state);
+        const incoming = migrate(data.state);
+        // local identity wins if the user just typed one
+        if(newName) incoming.user.name = newName;
+        state = incoming;
       } else {
         await supabaseClient.from('ev_tracker').insert({ sync_code: cfg.syncCode, state });
       }
-      statusEl.textContent = 'Connected. Synced across every device using this code.';
+      statusEl.textContent = hello + 'Connected. Synced across every device using this code.';
       statusEl.className = 'sync-status ok';
       persistLocal();
+      applyIdentity();
       render();
     }catch(e){
       statusEl.textContent = 'Connection failed: ' + e.message;
@@ -332,16 +468,30 @@ async function saveSettings(){
       return;
     }
   } else {
-    statusEl.textContent = 'Saved locally.';
+    save();
+    statusEl.textContent = hello + 'Saved locally.';
     statusEl.className = 'sync-status ok';
   }
+
+  // announce an API state change in the channel
+  if(apiOnline() && !prevOnline){
+    pushMsg('ev', 'API ONLINE — CONNECTION ESTABLISHED. ' + (state.user.name ? 'Hello, ' + state.user.name + '. ' : '') + "Channel's live. What's the status?");
+  } else if(!apiOnline() && prevOnline){
+    pushMsg('ev', 'API OFFLINE — AWAITING CONNECTION. Key removed; the channel is dark until a new one is saved.', true);
+  } else if(nameChanged && apiOnline()){
+    pushMsg('ev', 'Hello, ' + state.user.name + '. HUD relabeled.');
+  }
+
   setTimeout(closeSettings, 900);
 }
 
 function resetTracker(){
   state = structuredClone(defaultState);
   chatHistory = [];
-  save(); render();
+  currentPageId = null;
+  save();
+  applyIdentity();
+  render();
   document.getElementById('chatWindow').innerHTML = '';
   greet();
   closeSettings();
@@ -350,8 +500,11 @@ function resetTracker(){
 // ---------- STATE ----------
 // Ships empty on purpose: whoever opens this gets a blank tracker of their own.
 const defaultState = {
+  user:    { name: '' },
   mission: { name: '', sub: '', next: '' },
+  trackLabels: {},                 // { TAG: "Friendly display name" } — display only, tags stay canonical
   profile: { metricLabel: '', metricValue: '', lines: [] },
+  metricPages: [],                 // [{ id, name, metrics:[{id,label,type,value,target,unit,series}] }]
   tasks: [],
   logs: []
 };
@@ -359,15 +512,38 @@ const defaultState = {
 function migrate(raw){
   const s = structuredClone(defaultState);
   if(!raw || typeof raw !== 'object') return s;
-  s.mission = Object.assign(s.mission, raw.mission || {});
-  s.profile = Object.assign(s.profile, raw.profile || {});
+  s.user        = Object.assign(s.user, raw.user || {});
+  s.mission     = Object.assign(s.mission, raw.mission || {});
+  s.trackLabels = (raw.trackLabels && typeof raw.trackLabels === 'object') ? raw.trackLabels : {};
+  s.profile     = Object.assign(s.profile, raw.profile || {});
   s.profile.lines = Array.isArray(s.profile.lines) ? s.profile.lines : [];
   s.tasks = Array.isArray(raw.tasks) ? raw.tasks : [];
   s.logs  = Array.isArray(raw.logs)  ? raw.logs  : [];
+  s.metricPages = Array.isArray(raw.metricPages) ? raw.metricPages.map(p=>({
+    id: p.id || uid('pg'),
+    name: String(p.name || 'UNTITLED'),
+    metrics: Array.isArray(p.metrics) ? p.metrics.map(normalizeMetric) : []
+  })) : [];
   return s;
 }
 
+function normalizeMetric(m){
+  const types = ['kpi','bar','bullet','gauge','thermo','line'];
+  return {
+    id: m.id || uid('m'),
+    label: String(m.label || 'METRIC'),
+    type: types.includes(m.type) ? m.type : 'kpi',
+    value: num(m.value, 0),
+    target: num(m.target, 100),
+    unit: String(m.unit || ''),
+    series: Array.isArray(m.series) ? m.series.map(v=>num(v,0)) : []
+  };
+}
+
+function num(v, d){ const n = parseFloat(v); return isFinite(n) ? n : d; }
+
 let state = migrate(JSON.parse(localStorage.getItem(STATE_KEY) || 'null'));
+let currentPageId = null;
 
 function esc(str){
   return String(str == null ? '' : str)
@@ -375,9 +551,10 @@ function esc(str){
     .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 function uid(p){ return p + Date.now().toString(36) + Math.floor(Math.random()*1e4).toString(36); }
+function clamp01(x){ return Math.max(0, Math.min(1, x)); }
 
 // Progress is derived from whatever tags the user's own objectives carry.
-// No track is hardcoded — add a task tagged ANYTHING and a bar appears for it.
+// The DISPLAY NAME of each track is overridable via state.trackLabels — the tag itself never changes.
 function computeProgress(){
   const map = new Map();
   state.tasks.forEach(t=>{
@@ -387,12 +564,182 @@ function computeProgress(){
     e.total++; if(t.done) e.done++;
   });
   const tracks = [...map.entries()].map(([tag,v])=>({
-    tag, done:v.done, total:v.total, pct: Math.round((v.done/v.total)*100)
+    tag,
+    label: state.trackLabels[tag] || tag,
+    done:v.done, total:v.total,
+    pct: Math.round((v.done/v.total)*100)
   })).sort((a,b)=> b.total - a.total || a.tag.localeCompare(b.tag));
   const total = state.tasks.length;
   const done = state.tasks.filter(t=>t.done).length;
   return { tracks, done, total, overall: total ? Math.round((done/total)*100) : 0 };
 }
+
+// ---------- IDENTITY ----------
+function applyIdentity(){
+  const sub = document.getElementById('brandSub');
+  const nm = (state.user && state.user.name || '').trim();
+  if(nm){
+    sub.textContent = nm.toUpperCase() + "'S HUD";
+    sub.classList.add('named');
+  } else {
+    sub.textContent = 'USER H.U.D.';
+    sub.classList.remove('named');
+  }
+}
+
+// ---------- API STATE ----------
+function applyApiState(){
+  const badge = document.getElementById('apiBadge');
+  const input = document.getElementById('chatInput');
+  const btn   = document.getElementById('chatSendBtn');
+  if(apiOnline()){
+    badge.textContent = 'API ONLINE — CONNECTION ESTABLISHED';
+    badge.className = 'status-badge on';
+    input.disabled = false; btn.disabled = false;
+    input.placeholder = 'Ask E.V. anything about your goals, tasks, or strategy...';
+  } else {
+    badge.textContent = 'API OFFLINE — AWAITING CONNECTION';
+    badge.className = 'status-badge off';
+    input.disabled = true; btn.disabled = true;
+    input.placeholder = 'Channel offline — add a Gemini API key in SYSTEM CONFIG to enable.';
+  }
+}
+
+// ============================================================
+//  CHART RENDERERS — hand-rolled SVG, no libraries, offline-safe
+// ============================================================
+const C_TEAL='#35e6c8', C_DIM='#1c8577', C_AMBER='#ff9a3d', C_LINE='#143338', C_TXT='#5f8a86';
+
+function pctOf(m){
+  if(!m.target) return 0;
+  return clamp01(m.value / m.target);
+}
+function fmt(n){
+  if(!isFinite(n)) return '0';
+  return (Math.round(n*100)/100).toLocaleString();
+}
+
+function chartKPI(m){
+  const p = Math.round(pctOf(m)*100);
+  const diff = m.value - m.target;
+  const cls = diff >= 0 ? 'up' : 'down';
+  const arrow = diff >= 0 ? '▲' : '▼';
+  return '<div class="kpi-wrap">' +
+    '<div class="kpi-num">' + esc(fmt(m.value)) + (m.unit ? '<small>' + esc(m.unit) + '</small>' : '') + '</div>' +
+    '<div class="kpi-delta ' + cls + '">' + arrow + ' ' + esc(fmt(Math.abs(diff))) + ' vs target ' + esc(fmt(m.target)) + ' &middot; ' + p + '%</div>' +
+    '</div>';
+}
+
+function chartBar(m){
+  const p = Math.round(pctOf(m)*100);
+  return '<div style="width:100%">' +
+    '<div class="label-row" style="display:flex;justify-content:space-between;font-size:11px;color:' + C_TXT + ';margin-bottom:6px;letter-spacing:1px;">' +
+      '<span>' + esc(fmt(m.value)) + ' ' + esc(m.unit) + '</span><span>' + p + '% of ' + esc(fmt(m.target)) + '</span></div>' +
+    '<div class="bar-track" style="height:14px;"><div class="bar-fill" style="width:' + p + '%"></div></div>' +
+    '</div>';
+}
+
+function chartBullet(m){
+  const W=300, H=54, x0=6, w=W-12;
+  const max = Math.max(m.target, m.value) * 1.15 || 1;
+  const barW = (clamp01(m.value/max)) * w;
+  const tx = x0 + clamp01(m.target/max) * w;
+  const b1 = w*0.55, b2 = w*0.80;
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img">' +
+    '<rect x="' + x0 + '" y="12" width="' + b1 + '" height="22" fill="#0e2429"/>' +
+    '<rect x="' + (x0+b1) + '" y="12" width="' + (b2-b1) + '" height="22" fill="#122e34"/>' +
+    '<rect x="' + (x0+b2) + '" y="12" width="' + (w-b2) + '" height="22" fill="#16383f"/>' +
+    '<rect x="' + x0 + '" y="18" width="' + barW + '" height="10" fill="' + C_TEAL + '" style="filter:drop-shadow(0 0 4px ' + C_TEAL + ')"/>' +
+    '<line x1="' + tx + '" y1="8" x2="' + tx + '" y2="38" stroke="' + C_AMBER + '" stroke-width="3"/>' +
+    '<text x="' + x0 + '" y="50" fill="' + C_TXT + '" font-size="10" font-family="JetBrains Mono, monospace">' + esc(fmt(m.value)) + ' ' + esc(m.unit) + '</text>' +
+    '<text x="' + (W-6) + '" y="50" fill="' + C_AMBER + '" font-size="10" text-anchor="end" font-family="JetBrains Mono, monospace">TARGET ' + esc(fmt(m.target)) + '</text>' +
+    '</svg>';
+}
+
+function gaugePt(cx, cy, r, t){
+  const ang = Math.PI * (1 - clamp01(t));
+  return [cx + r*Math.cos(ang), cy - r*Math.sin(ang)];
+}
+function chartGauge(m){
+  const W=230, H=152, cx=115, cy=104, r=88;
+  const t = pctOf(m);
+  const [sx,sy] = gaugePt(cx,cy,r,0);
+  const [ex,ey] = gaugePt(cx,cy,r,1);
+  const arc = 'M ' + sx.toFixed(1) + ' ' + sy.toFixed(1) + ' A ' + r + ' ' + r + ' 0 0 1 ' + ex.toFixed(1) + ' ' + ey.toFixed(1);
+  const len = Math.PI * r;
+  const [nx,ny] = gaugePt(cx,cy,r-26,t);
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img">' +
+    '<path d="' + arc + '" stroke="' + C_LINE + '" stroke-width="15" fill="none" stroke-linecap="butt"/>' +
+    '<path d="' + arc + '" stroke="' + C_TEAL + '" stroke-width="15" fill="none" stroke-linecap="butt" ' +
+      'stroke-dasharray="' + len.toFixed(1) + '" stroke-dashoffset="' + (len - len*t).toFixed(1) + '" ' +
+      'style="filter:drop-shadow(0 0 5px ' + C_TEAL + '); transition:stroke-dashoffset .5s ease"/>' +
+    '<line x1="' + cx + '" y1="' + cy + '" x2="' + nx.toFixed(1) + '" y2="' + ny.toFixed(1) + '" stroke="' + C_AMBER + '" stroke-width="3"/>' +
+    '<circle cx="' + cx + '" cy="' + cy + '" r="5" fill="' + C_AMBER + '"/>' +
+    '<text x="16" y="' + (cy+15) + '" fill="' + C_TXT + '" font-size="10" font-family="JetBrains Mono, monospace">0</text>' +
+    '<text x="' + (W-16) + '" y="' + (cy+15) + '" fill="' + C_TXT + '" font-size="10" text-anchor="end" font-family="JetBrains Mono, monospace">' + esc(fmt(m.target)) + '</text>' +
+    '<text x="' + cx + '" y="' + (cy+32) + '" fill="' + C_TEAL + '" font-size="27" text-anchor="middle" font-family="Share Tech Mono, monospace">' + Math.round(t*100) + '%</text>' +
+    '<text x="' + cx + '" y="' + (cy+46) + '" fill="' + C_TXT + '" font-size="9.5" text-anchor="middle" font-family="JetBrains Mono, monospace">' + esc(fmt(m.value)) + ' ' + esc(m.unit) + '</text>' +
+    '</svg>';
+}
+
+function chartThermo(m){
+  const W=300, H=132, tx=22, top=10, tubeH=76, tubeW=20, bulbR=16, bulbY=top+tubeH+10;
+  const t = pctOf(m);
+  const fillH = tubeH * t;
+  const sx = tx + tubeW + 6, lx = tx + tubeW + 16;   // tick + label x
+  const rx = 128;                                     // readout column x
+  const tick = (y) => '<line x1="' + sx + '" y1="' + y + '" x2="' + (sx+7) + '" y2="' + y + '" stroke="' + C_TXT + '"/>';
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img">' +
+    '<rect x="' + tx + '" y="' + top + '" width="' + tubeW + '" height="' + tubeH + '" rx="' + (tubeW/2) + '" fill="#0e2429" stroke="' + C_LINE + '"/>' +
+    '<rect x="' + (tx+3) + '" y="' + (top + tubeH - fillH).toFixed(1) + '" width="' + (tubeW-6) + '" height="' + fillH.toFixed(1) + '" rx="' + ((tubeW-6)/2) + '" fill="' + C_TEAL + '" style="filter:drop-shadow(0 0 5px ' + C_TEAL + '); transition:all .5s ease"/>' +
+    '<circle cx="' + (tx+tubeW/2) + '" cy="' + bulbY + '" r="' + bulbR + '" fill="' + C_TEAL + '" style="filter:drop-shadow(0 0 6px ' + C_TEAL + ')"/>' +
+    tick(top+1) + tick(top+tubeH/2) + tick(top+tubeH) +
+    '<text x="' + lx + '" y="' + (top+5) + '" fill="' + C_AMBER + '" font-size="10" font-family="JetBrains Mono, monospace">' + esc(fmt(m.target)) + '</text>' +
+    '<text x="' + lx + '" y="' + (top+tubeH/2+4) + '" fill="' + C_TXT + '" font-size="10" font-family="JetBrains Mono, monospace">' + esc(fmt(m.target/2)) + '</text>' +
+    '<text x="' + lx + '" y="' + (top+tubeH+4) + '" fill="' + C_TXT + '" font-size="10" font-family="JetBrains Mono, monospace">0</text>' +
+    '<text x="' + (tx+tubeW/2) + '" y="' + (bulbY+5) + '" fill="#04120f" font-size="11" text-anchor="middle" font-weight="700" font-family="JetBrains Mono, monospace">' + Math.round(t*100) + '</text>' +
+    '<text x="' + rx + '" y="' + (top+42) + '" fill="' + C_TEAL + '" font-size="34" font-family="Share Tech Mono, monospace" style="filter:drop-shadow(0 0 5px rgba(53,230,200,.5))">' + esc(fmt(m.value)) + '</text>' +
+    '<text x="' + rx + '" y="' + (top+62) + '" fill="' + C_TXT + '" font-size="10.5" font-family="JetBrains Mono, monospace">' + esc(m.unit ? m.unit.toUpperCase() + ' · ' : '') + 'TARGET ' + esc(fmt(m.target)) + '</text>' +
+    '<text x="' + rx + '" y="' + (top+80) + '" fill="' + C_AMBER + '" font-size="11" font-family="JetBrains Mono, monospace">' + Math.round(t*100) + '% OF GOAL</text>' +
+    '</svg>';
+}
+
+function chartLine(m){
+  const pts = (m.series && m.series.length) ? m.series : [m.value];
+  const W=300, H=110, pad=8, bottom=H-22, topY=10;
+  if(pts.length < 2){
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img">' +
+      '<text x="' + (W/2) + '" y="' + (H/2) + '" fill="' + C_TXT + '" font-size="11" text-anchor="middle" font-family="JetBrains Mono, monospace">Add 2+ values below to plot a line</text>' +
+      '</svg>';
+  }
+  // scale to the data (plus the target line), not to zero — otherwise real trends flatten out
+  const tgt = isFinite(m.target) ? m.target : null;
+  let hi = Math.max(...pts, tgt === null ? -Infinity : tgt);
+  let lo = Math.min(...pts, tgt === null ?  Infinity : tgt);
+  let span = hi - lo;
+  if(span === 0){ hi += 1; lo -= 1; span = 2; }
+  const padSpan = span * 0.12;
+  hi += padSpan; lo -= padSpan; span = hi - lo;
+  const stepX = (W - pad*2) / (pts.length - 1);
+  const xy = pts.map((v,i)=>[ pad + i*stepX, bottom - ((v - lo)/span) * (bottom - topY) ]);
+  const line = xy.map(p=>p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+  const area = 'M ' + pad + ',' + bottom + ' L ' + xy.map(p=>p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' L ') + ' L ' + (pad+(pts.length-1)*stepX).toFixed(1) + ',' + bottom + ' Z';
+  const ty = m.target ? bottom - ((m.target - lo)/span) * (bottom - topY) : null;
+  const dots = xy.map(p=>'<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="2.6" fill="' + C_TEAL + '"/>').join('');
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img">' +
+    '<line x1="' + pad + '" y1="' + bottom + '" x2="' + (W-pad) + '" y2="' + bottom + '" stroke="' + C_LINE + '"/>' +
+    (ty !== null && ty > topY-2 && ty < bottom ? '<line x1="' + pad + '" y1="' + ty.toFixed(1) + '" x2="' + (W-pad) + '" y2="' + ty.toFixed(1) + '" stroke="' + C_AMBER + '" stroke-width="1" stroke-dasharray="4 4"/>' : '') +
+    '<path d="' + area + '" fill="rgba(53,230,200,0.10)"/>' +
+    '<polyline points="' + line + '" fill="none" stroke="' + C_TEAL + '" stroke-width="2" style="filter:drop-shadow(0 0 4px ' + C_TEAL + ')"/>' +
+    dots +
+    '<text x="' + pad + '" y="' + (H-6) + '" fill="' + C_TXT + '" font-size="9.5" font-family="JetBrains Mono, monospace">' + pts.length + ' PTS</text>' +
+    '<text x="' + (W-pad) + '" y="' + (H-6) + '" fill="' + C_TEAL + '" font-size="9.5" text-anchor="end" font-family="JetBrains Mono, monospace">LATEST ' + esc(fmt(pts[pts.length-1])) + ' ' + esc(m.unit) + '</text>' +
+    '</svg>';
+}
+
+const CHARTS = { kpi: chartKPI, bar: chartBar, bullet: chartBullet, gauge: chartGauge, thermo: chartThermo, line: chartLine };
+const TYPE_NAMES = { kpi:'KPI CARD', bar:'PROGRESS BAR', bullet:'BULLET GRAPH', gauge:'GAUGE CHART', thermo:'THERMOMETER', line:'LINE GRAPH' };
+function renderChart(m){ return (CHARTS[m.type] || chartKPI)(m); }
 
 // ---------- RENDER ----------
 function render(){
@@ -421,21 +768,29 @@ function render(){
     });
   }
 
-  // dynamic progress tracks
+  // dynamic progress tracks — headers are editable display labels
   const p = computeProgress();
   const bars = document.getElementById('trackBars');
+  const hint = document.getElementById('trackHint');
   bars.innerHTML = '';
   if(p.tracks.length === 0){
     bars.innerHTML = '<div class="empty-note">Progress tracks appear here automatically, one per objective tag.</div>';
+    hint.textContent = '';
   } else {
-    p.tracks.slice(0,6).forEach(tr=>{
+    p.tracks.slice(0,8).forEach(tr=>{
       const row = document.createElement('div');
       row.className = 'bar-row';
+      const showTag = tr.label.toUpperCase() !== tr.tag;
       row.innerHTML =
-        '<div class="label-row"><span>' + esc(tr.tag) + '</span><span>' + tr.pct + '% &middot; ' + tr.done + '/' + tr.total + '</span></div>' +
+        '<div class="label-row">' +
+          '<span><span class="track-label edit" contenteditable="true" data-track="' + esc(tr.tag) + '" data-ph="' + esc(tr.tag) + '">' + esc(tr.label) + '</span>' +
+          (showTag ? '<span class="track-tag">#' + esc(tr.tag) + '</span>' : '') + '</span>' +
+          '<span>' + tr.pct + '% &middot; ' + tr.done + '/' + tr.total + '</span>' +
+        '</div>' +
         '<div class="bar-track"><div class="bar-fill" style="width:' + tr.pct + '%"></div></div>';
       bars.appendChild(row);
     });
+    hint.textContent = 'Click any track name to rename it. The objective tag underneath stays the same.';
   }
 
   // ring
@@ -460,6 +815,8 @@ function render(){
     });
   }
 
+  renderPageGrid();
+
   // log feed
   const feed = document.getElementById('logFeed');
   feed.innerHTML = '';
@@ -475,9 +832,84 @@ function render(){
       feed.appendChild(div);
     });
   }
+
+  if(currentPageId) renderMetricPage();
 }
 
-// ---------- ACTIONS (delegated: no inline handlers on generated markup) ----------
+function renderPageGrid(){
+  const g = document.getElementById('pageGrid');
+  g.innerHTML = '';
+  if(state.metricPages.length === 0){
+    g.innerHTML = '<div class="empty-note">No metric pages yet. Name one above &mdash; each page holds as many metrics as you want, and every metric picks its own visual: KPI card, progress bar, bullet graph, gauge, thermometer, or line graph.</div>';
+    return;
+  }
+  state.metricPages.forEach(pg=>{
+    const card = document.createElement('div');
+    card.className = 'page-card';
+    card.innerHTML =
+      '<span class="pdel" data-act="delpage" data-id="' + esc(pg.id) + '" title="Delete page">&#10005;</span>' +
+      '<div class="pname">' + esc(pg.name.toUpperCase()) + '</div>' +
+      '<div class="pmeta">' + pg.metrics.length + ' METRIC' + (pg.metrics.length===1?'':'S') + '</div>' +
+      '<button class="load-btn" data-act="loadpage" data-id="' + esc(pg.id) + '">LOAD &#9656; ' + esc(pg.name.toUpperCase()) + '</button>';
+    g.appendChild(card);
+  });
+}
+
+function getPage(id){ return state.metricPages.find(p=>p.id===id) || null; }
+
+function renderMetricPage(){
+  const pg = getPage(currentPageId);
+  if(!pg){ backToHud(); return; }
+  document.getElementById('mvTitle').textContent = pg.name.toUpperCase();
+  document.getElementById('mvSub').textContent = 'METRIC MODULE · ' + pg.metrics.length + ' TRACKED';
+  const grid = document.getElementById('metricGrid');
+  grid.innerHTML = '';
+  if(pg.metrics.length === 0){
+    grid.innerHTML = '<div class="panel"><div class="empty-note">Nothing tracked on this page yet. Add a metric above and pick how you want it drawn.</div></div>';
+    return;
+  }
+  pg.metrics.forEach(m=>{
+    const card = document.createElement('div');
+    card.className = 'metric-card';
+    card.innerHTML = metricCardInner(m);
+    grid.appendChild(card);
+  });
+}
+
+function metricCardInner(m){
+  const isLine = m.type === 'line';
+  const opts = Object.keys(TYPE_NAMES).map(k =>
+    '<option value="' + k + '"' + (m.type===k?' selected':'') + '>' + TYPE_NAMES[k] + '</option>').join('');
+  return '<div class="mtitle"><span class="edit" contenteditable="true" data-mfield="label" data-id="' + esc(m.id) + '" data-ph="METRIC NAME">' + esc(m.label) + '</span>' +
+      '<span class="del" data-act="delmetric" data-id="' + esc(m.id) + '">&#10005;</span></div>' +
+    '<div class="mkind">' + esc(TYPE_NAMES[m.type] || 'KPI CARD') + (m.unit ? ' · ' + esc(m.unit.toUpperCase()) : '') + '</div>' +
+    '<div class="chart-box" id="chart-' + esc(m.id) + '">' + renderChart(m) + '</div>' +
+    '<div class="metric-edit">' +
+      (isLine
+        ? '<span class="lbl">SERIES</span><input class="series" type="text" data-mnum="series" data-id="' + esc(m.id) + '" value="' + esc(m.series.join(', ')) + '" placeholder="12, 15, 19, 22">'
+        : '<span class="lbl">VAL</span><input type="number" step="any" data-mnum="value" data-id="' + esc(m.id) + '" value="' + esc(m.value) + '">') +
+      '<span class="lbl">TGT</span><input type="number" step="any" data-mnum="target" data-id="' + esc(m.id) + '" value="' + esc(m.target) + '">' +
+      '<span class="lbl">UNIT</span><input type="text" maxlength="8" data-mnum="unit" data-id="' + esc(m.id) + '" value="' + esc(m.unit) + '" style="width:60px">' +
+      '<select data-mtype="1" data-id="' + esc(m.id) + '">' + opts + '</select>' +
+    '</div>';
+}
+
+function openPage(id){
+  currentPageId = id;
+  document.getElementById('hudView').style.display = 'none';
+  document.getElementById('metricView').style.display = '';
+  renderMetricPage();
+  window.scrollTo(0,0);
+}
+function backToHud(){
+  currentPageId = null;
+  document.getElementById('metricView').style.display = 'none';
+  document.getElementById('hudView').style.display = '';
+  render();
+  window.scrollTo(0,0);
+}
+
+// ---------- ACTIONS (delegated) ----------
 document.addEventListener('click', e=>{
   const el = e.target.closest('[data-act]');
   if(!el) return;
@@ -487,10 +919,39 @@ document.addEventListener('click', e=>{
     case 'deltask':     removeTask(id); break;
     case 'dellog':      deleteLog(id); break;
     case 'delprofile':  removeProfileLine(id); break;
+    case 'addtask':     addTaskManual(); break;
+    case 'addprofile':  addProfileLine(); break;
+    case 'addlog':      addLog(); break;
+    case 'addpage':     addPage(); break;
+    case 'loadpage':    openPage(id); break;
+    case 'delpage':     removePage(id); break;
+    case 'backhud':     backToHud(); break;
+    case 'addmetric':   addMetric(); break;
+    case 'delmetric':   removeMetric(id); break;
+    case 'sendchat':    sendChat(); break;
+    case 'opencfg':     openSettings(); break;
+    case 'closecfg':    closeSettings(); break;
+    case 'savecfg':     saveSettings(); break;
+    case 'reset':       resetTracker(); break;
   }
 });
 
-// inline editable fields -> state
+// Enter-key submits
+document.addEventListener('keydown', e=>{
+  if(e.key !== 'Enter') return;
+  const t = e.target;
+  if(!t.id) return;
+  switch(t.id){
+    case 'newTaskInput': case 'newTaskTag': addTaskManual(); break;
+    case 'newProfileInput': addProfileLine(); break;
+    case 'logInput': addLog(); break;
+    case 'newPageInput': addPage(); break;
+    case 'newMetricLabel': case 'newMetricValue': case 'newMetricTarget': case 'newMetricUnit': addMetric(); break;
+    case 'chatInput': sendChat(); break;
+  }
+});
+
+// bound editable fields (mission / profile headline) -> state
 document.querySelectorAll('[data-bind]').forEach(el=>{
   el.addEventListener('blur', ()=>{
     const [grp, key] = el.dataset.bind.split('.');
@@ -500,6 +961,56 @@ document.querySelectorAll('[data-bind]').forEach(el=>{
   el.addEventListener('keydown', ev=>{
     if(ev.key === 'Enter'){ ev.preventDefault(); el.blur(); }
   });
+});
+
+// editable TRACK HEADERS + editable METRIC NAMES (delegated, since both are re-rendered)
+document.addEventListener('focusout', e=>{
+  const el = e.target;
+  if(el.dataset && el.dataset.track !== undefined){
+    const tag = el.dataset.track;
+    const txt = el.textContent.trim();
+    if(!txt || txt.toUpperCase() === tag){ delete state.trackLabels[tag]; }
+    else { state.trackLabels[tag] = txt; }
+    save(); render();
+    return;
+  }
+  if(el.dataset && el.dataset.mfield === 'label'){
+    const pg = getPage(currentPageId); if(!pg) return;
+    const m = pg.metrics.find(x=>x.id===el.dataset.id); if(!m) return;
+    m.label = el.textContent.trim() || 'METRIC';
+    save();
+  }
+});
+document.addEventListener('keydown', e=>{
+  const el = e.target;
+  if(e.key === 'Enter' && el.dataset && (el.dataset.track !== undefined || el.dataset.mfield)){
+    e.preventDefault(); el.blur();
+  }
+});
+
+// live metric value edits — patch just the chart so the input keeps focus
+document.addEventListener('input', e=>{
+  const el = e.target;
+  if(!el.dataset || !el.dataset.mnum) return;
+  const pg = getPage(currentPageId); if(!pg) return;
+  const m = pg.metrics.find(x=>x.id===el.dataset.id); if(!m) return;
+  const f = el.dataset.mnum;
+  if(f === 'series'){ m.series = el.value.split(/[, ]+/).filter(s=>s!=='').map(s=>num(s,0)); m.value = m.series.length ? m.series[m.series.length-1] : m.value; }
+  else if(f === 'unit'){ m.unit = el.value; }
+  else { m[f] = num(el.value, 0); }
+  const box = document.getElementById('chart-' + m.id);
+  if(box) box.innerHTML = renderChart(m);
+  save();
+});
+// metric type switch — full card re-render
+document.addEventListener('change', e=>{
+  const el = e.target;
+  if(!el.dataset || !el.dataset.mtype) return;
+  const pg = getPage(currentPageId); if(!pg) return;
+  const m = pg.metrics.find(x=>x.id===el.dataset.id); if(!m) return;
+  m.type = el.value;
+  if(m.type === 'line' && m.series.length === 0) m.series = [m.value];
+  save(); renderMetricPage();
 });
 
 function toggleTask(id){
@@ -536,6 +1047,52 @@ function removeProfileLine(id){
   state.profile.lines = state.profile.lines.filter(l=>l.id!==id);
   save(); render();
 }
+
+// ---------- METRIC PAGES ----------
+function addPage(){
+  const input = document.getElementById('newPageInput');
+  const name = input.value.trim();
+  if(!name) return;
+  const pg = { id: uid('pg'), name, metrics: [] };
+  state.metricPages.push(pg);
+  input.value = '';
+  save(); render();
+}
+function removePage(id){
+  const pg = getPage(id);
+  if(!pg) return;
+  if(pg.metrics.length && !confirm('Delete "' + pg.name + '" and its ' + pg.metrics.length + ' metric(s)?')) return;
+  state.metricPages = state.metricPages.filter(p=>p.id!==id);
+  if(currentPageId === id) currentPageId = null;
+  save(); render();
+}
+function addMetric(){
+  const pg = getPage(currentPageId); if(!pg) return;
+  const labelEl = document.getElementById('newMetricLabel');
+  const label = labelEl.value.trim();
+  if(!label) return;
+  const m = normalizeMetric({
+    label,
+    type: document.getElementById('newMetricType').value,
+    value: document.getElementById('newMetricValue').value,
+    target: document.getElementById('newMetricTarget').value || 100,
+    unit: document.getElementById('newMetricUnit').value.trim()
+  });
+  if(m.type === 'line') m.series = [m.value];
+  pg.metrics.push(m);
+  labelEl.value = '';
+  document.getElementById('newMetricValue').value = '';
+  document.getElementById('newMetricTarget').value = '';
+  document.getElementById('newMetricUnit').value = '';
+  save(); renderMetricPage();
+  labelEl.focus();
+}
+function removeMetric(id){
+  const pg = getPage(currentPageId); if(!pg) return;
+  pg.metrics = pg.metrics.filter(m=>m.id!==id);
+  save(); renderMetricPage();
+}
+
 function stamp(){
   return new Date().toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
 }
@@ -570,13 +1127,15 @@ function tickClock(){
 setInterval(tickClock, 30000);
 tickClock();
 
-// ---------- ADVISORY CHANNEL ----------
+// ============================================================
+//  ADVISORY CHANNEL
+// ============================================================
 const chatWindow = document.getElementById('chatWindow');
 let chatHistory = [];
 
-function pushMsg(role, text){
+function pushMsg(role, text, offline){
   const div = document.createElement('div');
-  div.className = 'msg ' + (role==='user' ? 'user' : 'ev');
+  div.className = 'msg ' + (role==='user' ? 'user' : 'ev' + (offline ? ' offline' : ''));
   if(role === 'ev'){ div.innerHTML = '<span class="who">E.V.</span>' + esc(text); }
   else { div.textContent = text; }
   chatWindow.appendChild(div);
@@ -613,6 +1172,12 @@ const TOOL_DECLARATIONS = [
       sub:{type:"string", description:"One-line description of the goal"},
       next:{type:"string", description:"The single next concrete action"}
     } } },
+  { name:"set_track_label",
+    description:"Rename the DISPLAY label of a progress track on the mission panel. The underlying objective tag is unchanged — this only changes what the header reads.",
+    parameters:{ type:"object", properties:{
+      tag:{type:"string", description:"The existing objective tag, e.g. PYTHON"},
+      label:{type:"string", description:"Friendly display name, e.g. 'Python Fundamentals'. Pass an empty string to reset it to the raw tag."}
+    }, required:["tag"] } },
   { name:"update_profile",
     description:"Update the PROFILE panel: the headline metric (its label and value) and/or add a profile line describing background, strengths, or a gap being closed.",
     parameters:{ type:"object", properties:{
@@ -620,54 +1185,151 @@ const TOOL_DECLARATIONS = [
       metric_value:{type:"string", description:"Value for the headline number"},
       add_line:{type:"string", description:"A profile line to add"},
       line_flag:{type:"string", description:"Optional short tag on that line, e.g. FIX or GOAL"}
-    } } }
+    } } },
+  { name:"add_metric_page",
+    description:"Create a new named metric page (a module the user can load from the HUD). Use when the user wants to start tracking a new dimension of their life or work.",
+    parameters:{ type:"object", properties:{
+      name:{type:"string", description:"Page name, e.g. FITNESS, FINANCE, STUDY"}
+    }, required:["name"] } },
+  { name:"add_metric",
+    description:"Add a metric to a metric page, choosing how it is drawn.",
+    parameters:{ type:"object", properties:{
+      page:{type:"string", description:"Name or id of an existing metric page"},
+      label:{type:"string", description:"Metric name"},
+      type:{type:"string", description:"One of: kpi, bar, bullet, gauge, thermo, line"},
+      value:{type:"number", description:"Current value"},
+      target:{type:"number", description:"Target value"},
+      unit:{type:"string", description:"Short unit label, e.g. LBS, HRS, USD"}
+    }, required:["page","label"] } },
+  { name:"set_metric",
+    description:"Update an existing metric's current value, target, or chart type. Use whenever the user reports a new number.",
+    parameters:{ type:"object", properties:{
+      page:{type:"string", description:"Name or id of the metric page"},
+      metric:{type:"string", description:"Name or id of the metric"},
+      value:{type:"number", description:"New current value"},
+      target:{type:"number", description:"New target"},
+      type:{type:"string", description:"New chart type: kpi, bar, bullet, gauge, thermo, line"},
+      append_point:{type:"boolean", description:"For line graphs: true appends the value as a new data point instead of replacing the last one."}
+    }, required:["page","metric"] } },
+  { name:"remove_metric",
+    description:"Delete a metric from a page.",
+    parameters:{ type:"object", properties:{
+      page:{type:"string", description:"Name or id of the metric page"},
+      metric:{type:"string", description:"Name or id of the metric"}
+    }, required:["page","metric"] } }
 ];
+
+function findPage(ref){
+  if(!ref) return null;
+  const r = String(ref).toLowerCase();
+  return state.metricPages.find(p=>p.id===ref) ||
+         state.metricPages.find(p=>p.name.toLowerCase()===r) ||
+         state.metricPages.find(p=>p.name.toLowerCase().includes(r)) || null;
+}
+function findMetric(pg, ref){
+  if(!pg || !ref) return null;
+  const r = String(ref).toLowerCase();
+  return pg.metrics.find(m=>m.id===ref) ||
+         pg.metrics.find(m=>m.label.toLowerCase()===r) ||
+         pg.metrics.find(m=>m.label.toLowerCase().includes(r)) || null;
+}
+function refreshAll(){ save(); if(currentPageId) renderMetricPage(); else render(); }
 
 const toolFunctions = {
   update_task(a){
     const t = state.tasks.find(t=>t.id===a.task_id);
     if(!t) return { success:false, error:'No task with id ' + a.task_id };
-    t.done = !!a.done; save(); render();
+    t.done = !!a.done; refreshAll();
     return { success:true, task:t.label, done:t.done };
   },
   add_task(a){
     if(!a.label) return { success:false, error:'Missing label' };
     const t = { id: uid('t'), label:a.label, done:false, tag:(a.tag||'GENERAL').toUpperCase() };
-    state.tasks.push(t); save(); render();
+    state.tasks.push(t); refreshAll();
     return { success:true, task_id:t.id, label:t.label, tag:t.tag };
   },
   remove_task(a){
     const removed = state.tasks.find(t=>t.id===a.task_id);
     if(!removed) return { success:false, error:'No task with id ' + a.task_id };
-    state.tasks = state.tasks.filter(t=>t.id!==a.task_id); save(); render();
+    state.tasks = state.tasks.filter(t=>t.id!==a.task_id); refreshAll();
     return { success:true, removed:removed.label };
   },
   add_log_entry(a){
     if(!a.text) return { success:false, error:'Missing text' };
     state.logs.push({ id: uid('l'), text:a.text, time: stamp() });
-    save(); render();
+    refreshAll();
     return { success:true, logged:a.text };
   },
   set_mission(a){
     if(a.name != null) state.mission.name = a.name;
     if(a.sub  != null) state.mission.sub  = a.sub;
     if(a.next != null) state.mission.next = a.next;
-    save(); render();
+    refreshAll();
     return { success:true, mission: state.mission };
+  },
+  set_track_label(a){
+    const tag = String(a.tag||'').toUpperCase();
+    if(!tag) return { success:false, error:'Missing tag' };
+    const exists = state.tasks.some(t=>(t.tag||'GENERAL').toUpperCase()===tag);
+    if(!exists) return { success:false, error:'No objectives carry the tag ' + tag };
+    if(!a.label || String(a.label).trim()==='' ) delete state.trackLabels[tag];
+    else state.trackLabels[tag] = String(a.label).trim();
+    refreshAll();
+    return { success:true, tag, label: state.trackLabels[tag] || tag };
   },
   update_profile(a){
     if(a.metric_label != null) state.profile.metricLabel = a.metric_label;
     if(a.metric_value != null) state.profile.metricValue = a.metric_value;
     if(a.add_line) state.profile.lines.push({ id: uid('p'), text:a.add_line, flag:(a.line_flag||'').toUpperCase() });
-    save(); render();
+    refreshAll();
     return { success:true, profile: state.profile };
+  },
+  add_metric_page(a){
+    if(!a.name) return { success:false, error:'Missing name' };
+    if(findPage(a.name)) return { success:false, error:'A page named ' + a.name + ' already exists' };
+    const pg = { id: uid('pg'), name:String(a.name), metrics:[] };
+    state.metricPages.push(pg); refreshAll();
+    return { success:true, page_id:pg.id, name:pg.name };
+  },
+  add_metric(a){
+    const pg = findPage(a.page);
+    if(!pg) return { success:false, error:'No metric page matching ' + a.page };
+    const m = normalizeMetric({ label:a.label, type:a.type, value:a.value, target:a.target==null?100:a.target, unit:a.unit });
+    if(m.type === 'line') m.series = [m.value];
+    pg.metrics.push(m); refreshAll();
+    return { success:true, page:pg.name, metric_id:m.id, label:m.label, type:m.type, value:m.value, target:m.target };
+  },
+  set_metric(a){
+    const pg = findPage(a.page);
+    if(!pg) return { success:false, error:'No metric page matching ' + a.page };
+    const m = findMetric(pg, a.metric);
+    if(!m) return { success:false, error:'No metric matching ' + a.metric + ' on ' + pg.name };
+    if(a.type && TYPE_NAMES[a.type]) m.type = a.type;
+    if(a.target != null) m.target = num(a.target, m.target);
+    if(a.value != null){
+      m.value = num(a.value, m.value);
+      if(m.type === 'line'){
+        if(a.append_point === false && m.series.length) m.series[m.series.length-1] = m.value;
+        else m.series.push(m.value);
+      }
+    }
+    refreshAll();
+    return { success:true, page:pg.name, metric:m.label, value:m.value, target:m.target, type:m.type, points:m.series.length };
+  },
+  remove_metric(a){
+    const pg = findPage(a.page);
+    if(!pg) return { success:false, error:'No metric page matching ' + a.page };
+    const m = findMetric(pg, a.metric);
+    if(!m) return { success:false, error:'No metric matching ' + a.metric };
+    pg.metrics = pg.metrics.filter(x=>x.id!==m.id); refreshAll();
+    return { success:true, removed:m.label };
   }
 };
 
 function buildSystemPrompt(){
   const p = computeProgress();
   const tracks = p.tracks.length
-    ? p.tracks.map(t=>`${t.tag}: ${t.pct}% (${t.done}/${t.total})`).join(' | ')
+    ? p.tracks.map(t=>`${t.label}${t.label!==t.tag?` (tag ${t.tag})`:''}: ${t.pct}% (${t.done}/${t.total})`).join(' | ')
     : 'No tracks yet.';
   const taskSummary = state.tasks.length
     ? state.tasks.map(t=>`- id:${t.id} [${t.done?'x':' '}] ${t.label} (${t.tag})`).join('\n')
@@ -680,29 +1342,33 @@ function buildSystemPrompt(){
       ? `${state.profile.metricLabel || 'Metric'}: ${state.profile.metricValue || '—'}` : null,
     ...state.profile.lines.map(l=> '- ' + l.text + (l.flag ? ` [${l.flag}]` : ''))
   ].filter(Boolean).join('\n') || 'Profile not filled in yet.';
+  const metricSummary = state.metricPages.length
+    ? state.metricPages.map(pg =>
+        `PAGE "${pg.name}" (id:${pg.id})\n` + (pg.metrics.length
+          ? pg.metrics.map(m=>`  - id:${m.id} ${m.label} [${m.type}] ${m.value}${m.unit?' '+m.unit:''} / target ${m.target}${m.type==='line'?` (${m.series.length} pts)`:''}`).join('\n')
+          : '  (no metrics yet)')
+      ).join('\n')
+    : 'No metric pages yet.';
+  const who = (state.user && state.user.name) ? state.user.name : '';
 
-  return `You are E.V., a sharp, quick-witted advisory AI embedded in the user's personal status tracker. Talk like a genuinely smart, capable person who's in their corner — direct, a little dry-witted, warm underneath. Never use bracketed system-diagnostic voice like "[SCANNING...]" — that's a bit, not a personality. Keep replies brief unless asked for more.
-
+  return `You are E.V., a sharp, quick-witted advisory AI embedded in ${who ? who + "'s" : "the user's"} personal status tracker. Talk like a genuinely smart, capable person who's in their corner — direct, a little dry-witted, warm underneath. Never use bracketed system-diagnostic voice like "[SCANNING...]" — that's a bit, not a personality. Keep replies brief unless asked for more.
+${who ? `The user's name is ${who}. Use it sparingly and naturally.` : ''}
 You do not know anything about the user beyond what appears below. Do not invent a school, employer, career, or background for them. If the tracker is empty, your first job is to ask what they're working toward, then use set_mission, add_task, and update_profile to set it up for them instead of making them type it all in.
-
-You have real tools — update_task, add_task, remove_task, add_log_entry, set_mission, and update_profile actually change the user's data, they are not roleplay. When the user asks you to check something off, add or delete an objective, log something, or change their mission or profile, CALL THE TOOL. Never claim you saved, added, removed, or logged something unless you actually called the matching tool.
-
-Objectives are grouped by tag, and every tag becomes its own progress track — so reuse existing tags when adding related work, and invent a new one only for a genuinely new area.
-
+You have real tools — they actually change the user's data, they are not roleplay. When the user asks you to check something off, add or delete an objective, log something, rename a track, change their mission or profile, or update a number they track, CALL THE TOOL. Never claim you saved, added, removed, or logged something unless you actually called the matching tool.
+Objectives are grouped by tag, and every tag becomes its own progress track — so reuse existing tags when adding related work, and invent a new one only for a genuinely new area. Track headers can carry a friendlier display label via set_track_label; the tag itself never changes.
+Metrics live on named pages the user loads from the HUD. Chart types are: kpi, bar (progress bar), bullet, gauge, thermo (thermometer), line. Pick the type that fits — bullet or bullet-like for value-vs-target, gauge or thermo for percentage-of-goal, line for anything tracked over time, kpi for a single headline number.
 You also have live web search — use it whenever a question depends on current information rather than guessing.
-
 MISSION: ${state.mission.name || '(not set)'}
 DETAIL: ${state.mission.sub || '(not set)'}
 NEXT ACTION: ${state.mission.next || '(not set)'}
 OVERALL: ${p.overall}% (${p.done}/${p.total} objectives complete)
 TRACKS: ${tracks}
-
 PROFILE:
 ${profileSummary}
-
+METRIC PAGES:
+${metricSummary}
 OBJECTIVES (use the id field with update_task / remove_task):
 ${taskSummary}
-
 RECENT LOG:
 ${logSummary}`;
 }
@@ -724,9 +1390,8 @@ async function sendChat(){
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
   if(!text) return;
-  if(!cfg.geminiKey){
-    pushMsg('user', text); input.value = '';
-    pushMsg('ev', 'No API key configured. Tap the gear icon and add a Gemini API key to activate this channel. Everything else on the tracker works without it.');
+  if(!apiOnline()){
+    pushMsg('ev', 'API OFFLINE — AWAITING CONNECTION. Add a Gemini API key under SYSTEM CONFIG (gear icon) to bring this channel up. Everything else on the HUD keeps working.', true);
     return;
   }
   input.value = '';
@@ -759,28 +1424,42 @@ async function sendChat(){
       parts = data?.candidates?.[0]?.content?.parts || [];
     }
     document.getElementById('typingIndicator')?.remove();
-    if(data.error){ pushMsg('ev', 'API error: ' + data.error.message); return; }
+    if(data.error){
+      const msg = String(data.error.message || '');
+      const quota = /quota|exhaust|billing|RESOURCE_EXHAUSTED|429/i.test(msg);
+      pushMsg('ev', (quota ? 'API OFFLINE — QUOTA EXHAUSTED. ' : 'API ERROR: ') + msg, true);
+      return;
+    }
     const reply = (parts.find(p=>p.text)?.text) || 'Done.';
     pushMsg('ev', reply);
     chatHistory.push({ role:'model', parts:[{ text: reply }] });
   }catch(e){
     document.getElementById('typingIndicator')?.remove();
-    pushMsg('ev', 'Connection error reaching the advisory channel.');
+    pushMsg('ev', 'API OFFLINE — CONNECTION FAILED. Could not reach the advisory channel.', true);
     console.error(e);
   }
 }
 
 function greet(){
+  const nm = (state.user && state.user.name || '').trim();
+  const hello = nm ? 'Hello, ' + nm + '. ' : '';
+  if(!apiOnline()){
+    pushMsg('ev', hello + 'API OFFLINE — AWAITING CONNECTION. No Gemini key saved, so this channel is dark. Add one under SYSTEM CONFIG (gear icon) and it comes online. Objectives, mission, metrics, and logs all run fine without it.', true);
+    return;
+  }
   const blank = !state.mission.name && state.tasks.length === 0;
-  pushMsg('ev', blank
-    ? "Tracker's online and completely blank — which is the point. Set your mission at the top, add a few objectives with tags, and the progress tracks build themselves. Or just tell me what you're working toward and I'll set it up for you."
-    : "Tracker's online — hands on your data, eyes on the web. Add, check off, remove, or log something and watch it happen. What's the status?");
+  pushMsg('ev', 'API ONLINE — CONNECTION ESTABLISHED. ' + hello + (blank
+    ? "Tracker's completely blank, which is the point. Set your mission up top, add a few tagged objectives, and the progress tracks build themselves. Or just tell me what you're working toward and I'll set it up for you."
+    : "Hands on your data, eyes on the web. Add, check off, remove, log, or update a metric and watch it happen. What's the status?"));
 }
 
 // ---------- INIT ----------
 initSupabase();
+applyIdentity();
+applyApiState();
 render();
 greet();
+
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=> navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 }
