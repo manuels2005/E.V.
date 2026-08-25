@@ -99,12 +99,10 @@
   .bar-row{ margin-bottom: 10px; }
   .bar-row .label-row{ display:flex; justify-content:space-between; font-size:11px; color:var(--text-dim); margin-bottom:4px; letter-spacing:1px; gap:10px; }
   .bar-row .track-label{ color: var(--text); }
-  .bar-row .track-tag{ color: var(--text-dim); opacity:.75; font-size:9.5px; margin-left:6px; letter-spacing:1px; }
   .bar-track{ height:8px; background:var(--panel-2); border:1px solid var(--line); position:relative; overflow:hidden; }
   .bar-fill{ height:100%; background: linear-gradient(90deg, var(--teal-dim), var(--teal)); box-shadow: var(--glow); transition: width .5s ease; }
   .next-up{ margin-top:16px; padding:10px 12px; border-left:2px solid var(--amber); background:rgba(255,154,61,0.06); font-size:12.5px; }
   .next-up b{ color:var(--amber); letter-spacing:1px; }
-  .hint{ font-size:10px; color:var(--text-dim); opacity:.7; margin-top:10px; font-style:italic; }
   .metric-label{ font-size:11px; color:var(--text-dim); letter-spacing:1px; }
   .metric-value{ font-family:'Share Tech Mono'; font-size:26px; color:var(--teal); text-shadow:var(--glow); margin:2px 0 14px; }
   .log-input-row{ display:flex; gap:8px; margin-bottom:12px; }
@@ -146,6 +144,8 @@
   .back-btn{ background:transparent; border:1px solid var(--line-bright); color:var(--text-dim);
     font-family:'Share Tech Mono'; letter-spacing:2px; font-size:11px; padding:8px 14px; cursor:pointer; }
   .back-btn:hover{ color:var(--teal); border-color:var(--teal-dim); }
+  .export-btn{ color:var(--teal); border-color:var(--teal-dim); }
+  .export-btn:hover{ background:var(--teal-dim); color:#04120f; box-shadow:var(--glow); }
 
   .metric-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(290px,1fr)); gap:14px; }
   .metric-card{ border:1px solid var(--line); background:var(--panel-2); padding:12px 14px 14px; position:relative; }
@@ -248,8 +248,7 @@
       <div class="mission-name edit" contenteditable="true" data-bind="mission.name" data-ph="USER'S MAIN OBJECTIVE"></div>
       <div class="mission-sub edit" contenteditable="true" data-bind="mission.sub" data-ph="Add a short description of the goal"></div>
       <div id="trackBars"></div>
-      <div class="next-up"><b>NEXT UP:</b> <span class="edit" contenteditable="true" data-bind="mission.next" data-ph="What's the very next action?"></span></div>
-      <div class="hint" id="trackHint"></div>
+      <div class="next-up"><b>NEXT UP:</b> <span class="edit" contenteditable="true" data-bind="mission.next" data-ph="The very next action..."></span></div>
     </div>
 
     <div class="panel">
@@ -269,7 +268,7 @@
     <div class="panel">
       <div class="panel-title">METRIC MODULES <span class="dot"></span></div>
       <div class="add-row">
-        <input id="newPageInput" class="grow" type="text" placeholder="Name a new metric page... e.g. FITNESS, FINANCE, STUDY"/>
+        <input id="newPageInput" class="grow" type="text" placeholder="Name a new metric page..."/>
         <button data-act="addpage">CREATE PAGE</button>
       </div>
       <div class="page-grid" id="pageGrid"></div>
@@ -280,7 +279,7 @@
     <div class="panel">
       <div class="panel-title">LOG ENTRY <span class="dot"></span></div>
       <div class="log-input-row">
-        <input id="logInput" type="text" placeholder="Log an update... e.g. 'Finished the first project notebook'"/>
+        <input id="logInput" type="text" placeholder="Log an update..."/>
         <button data-act="addlog">LOG</button>
       </div>
       <div class="log-feed" id="logFeed"></div>
@@ -298,28 +297,29 @@
       </div>
       <div class="chat-window" id="chatWindow"></div>
       <div class="chat-input-row">
-        <input id="chatInput" type="text" placeholder="Ask E.V. anything about your goals, tasks, or strategy..."/>
+        <input id="chatInput" type="text" placeholder="Ask E.V. anything..."/>
         <button class="btn" id="chatSendBtn" data-act="sendchat">SEND</button>
       </div>
     </div>
   </div>
 
-  <div class="footer-note">E.V. STATUS TRACKER v3.0 &mdash; installable PWA</div>
+  <div class="footer-note">Emulated Vector 1.0.0</div>
 </div>
 
 <!-- ============ METRIC PAGE VIEW ============ -->
 <div class="frame" id="metricView" style="display:none;">
   <div class="view-header">
     <button class="back-btn" data-act="backhud">&#9666; BACK TO HUD</button>
-    <div>
+    <div style="flex:1;">
       <div class="vtitle" id="mvTitle">MODULE</div>
       <span class="vsub" id="mvSub">METRIC MODULE</span>
     </div>
+    <button class="back-btn export-btn" data-act="export">&#8681; EXPORT .XLSX</button>
   </div>
   <div class="panel" style="margin-bottom:14px;">
     <div class="panel-title">ADD METRIC <span class="dot"></span></div>
     <div class="add-row" style="flex-wrap:wrap;">
-      <input id="newMetricLabel" class="grow" type="text" placeholder="Metric name... e.g. Bench Press, Cash Saved, Study Hours"/>
+      <input id="newMetricLabel" class="grow" type="text" placeholder="Metric name..."/>
       <select id="newMetricType">
         <option value="kpi">KPI CARD</option>
         <option value="bar">PROGRESS BAR</option>
@@ -335,24 +335,22 @@
     </div>
   </div>
   <div class="metric-grid" id="metricGrid"></div>
-  <div class="footer-note" style="margin-top:16px;">Values are yours to set &mdash; edit any card in place, or tell E.V. to update it.</div>
+  <div class="footer-note" style="margin-top:16px;">Emulated Vector 1.0.0</div>
 </div>
 
 <!-- SETTINGS MODAL -->
 <div class="modal-backdrop" id="settingsModal">
   <div class="modal">
     <h3>SYSTEM CONFIG</h3>
-    <p>Everything in this tracker is yours to define. Objectives, mission, and profile are edited directly on the dashboard &mdash; click any field to type in it.</p>
 
     <div class="sect-title">IDENTITY</div>
-    <label>YOUR NAME &mdash; personalizes the HUD header and E.V.'s greeting</label>
-    <input id="cfgUserName" type="text" placeholder="e.g. Manuel" maxlength="24">
+    <label>YOUR NAME</label>
+    <input id="cfgUserName" type="text" placeholder="Your name..." maxlength="24">
 
     <div class="sect"></div>
     <div class="sect-title">CROSS-DEVICE SYNC (OPTIONAL)</div>
-    <p style="margin-top:6px;">Connect a free Supabase project so this tracker syncs across every device. Same sync code + keys on each device = same data.</p>
-    <label>SYNC CODE (pick anything, use it on all devices)</label>
-    <input id="cfgSyncCode" type="text" placeholder="e.g. my-tracker-01">
+    <label>SYNC CODE &mdash; same code on every device</label>
+    <input id="cfgSyncCode" type="text" placeholder="Pick a sync code...">
     <label>SUPABASE PROJECT URL</label>
     <input id="cfgSupaUrl" type="text" placeholder="https://xxxxx.supabase.co">
     <label>SUPABASE ANON PUBLIC KEY</label>
@@ -360,8 +358,7 @@
 
     <div class="sect"></div>
     <div class="sect-title">ADVISORY CHANNEL (OPTIONAL)</div>
-    <p style="margin-top:6px;">Leave blank and the channel reports <b>API OFFLINE</b>. Everything else on the HUD works without it.</p>
-    <label>GEMINI API KEY &mdash; enables the E.V. chat</label>
+    <label>GEMINI API KEY</label>
     <input id="cfgGeminiKey" type="password" placeholder="AIza...">
 
     <div class="sync-status" id="syncStatusMsg"></div>
@@ -457,7 +454,7 @@ async function saveSettings(){
       } else {
         await supabaseClient.from('ev_tracker').insert({ sync_code: cfg.syncCode, state });
       }
-      statusEl.textContent = hello + 'Connected. Synced across every device using this code.';
+      statusEl.textContent = hello + 'Connected.';
       statusEl.className = 'sync-status ok';
       persistLocal();
       applyIdentity();
@@ -475,9 +472,9 @@ async function saveSettings(){
 
   // announce an API state change in the channel
   if(apiOnline() && !prevOnline){
-    pushMsg('ev', 'API ONLINE — CONNECTION ESTABLISHED. ' + (state.user.name ? 'Hello, ' + state.user.name + '. ' : '') + "Channel's live. What's the status?");
+    pushMsg('ev', 'API ONLINE — CONNECTION ESTABLISHED. ' + (state.user.name ? 'Hello, ' + state.user.name + '. ' : '') + "What's the status?");
   } else if(!apiOnline() && prevOnline){
-    pushMsg('ev', 'API OFFLINE — AWAITING CONNECTION. Key removed; the channel is dark until a new one is saved.', true);
+    pushMsg('ev', 'API OFFLINE — AWAITING CONNECTION.', true);
   } else if(nameChanged && apiOnline()){
     pushMsg('ev', 'Hello, ' + state.user.name + '. HUD relabeled.');
   }
@@ -596,12 +593,12 @@ function applyApiState(){
     badge.textContent = 'API ONLINE — CONNECTION ESTABLISHED';
     badge.className = 'status-badge on';
     input.disabled = false; btn.disabled = false;
-    input.placeholder = 'Ask E.V. anything about your goals, tasks, or strategy...';
+    input.placeholder = 'Ask E.V. anything...';
   } else {
     badge.textContent = 'API OFFLINE — AWAITING CONNECTION';
     badge.className = 'status-badge off';
     input.disabled = true; btn.disabled = true;
-    input.placeholder = 'Channel offline — add a Gemini API key in SYSTEM CONFIG to enable.';
+    input.placeholder = 'Channel offline.';
   }
 }
 
@@ -678,7 +675,7 @@ function chartGauge(m){
     '<text x="16" y="' + (cy+15) + '" fill="' + C_TXT + '" font-size="10" font-family="JetBrains Mono, monospace">0</text>' +
     '<text x="' + (W-16) + '" y="' + (cy+15) + '" fill="' + C_TXT + '" font-size="10" text-anchor="end" font-family="JetBrains Mono, monospace">' + esc(fmt(m.target)) + '</text>' +
     '<text x="' + cx + '" y="' + (cy+32) + '" fill="' + C_TEAL + '" font-size="27" text-anchor="middle" font-family="Share Tech Mono, monospace">' + Math.round(t*100) + '%</text>' +
-    '<text x="' + cx + '" y="' + (cy+46) + '" fill="' + C_TXT + '" font-size="9.5" text-anchor="middle" font-family="JetBrains Mono, monospace">' + esc(fmt(m.value)) + ' ' + esc(m.unit) + '</text>' +
+    '<text x="' + cx + '" y="' + (cy+46) + '" fill="' + C_TXT + '" font-size="9.5" text-anchor="middle" font-family="JetBrains Mono, monospace">' + esc(fmt(m.value)) + ' / ' + esc(fmt(m.target)) + (m.unit ? ' ' + esc(m.unit) : '') + '</text>' +
     '</svg>';
 }
 
@@ -754,7 +751,7 @@ function render(){
   const list = document.getElementById('taskList');
   list.innerHTML = '';
   if(state.tasks.length === 0){
-    list.innerHTML = '<div class="empty-note">No objectives yet. Add your first one above &mdash; tag it (PYTHON, SQL, RESUME, GYM, anything) and a progress track builds itself.</div>';
+    list.innerHTML = '<div class="empty-note">No objectives yet.</div>';
   } else {
     state.tasks.forEach(t=>{
       const row = document.createElement('div');
@@ -771,27 +768,18 @@ function render(){
   // dynamic progress tracks — headers are editable display labels
   const p = computeProgress();
   const bars = document.getElementById('trackBars');
-  const hint = document.getElementById('trackHint');
   bars.innerHTML = '';
-  if(p.tracks.length === 0){
-    bars.innerHTML = '<div class="empty-note">Progress tracks appear here automatically, one per objective tag.</div>';
-    hint.textContent = '';
-  } else {
-    p.tracks.slice(0,8).forEach(tr=>{
-      const row = document.createElement('div');
-      row.className = 'bar-row';
-      const showTag = tr.label.toUpperCase() !== tr.tag;
-      row.innerHTML =
-        '<div class="label-row">' +
-          '<span><span class="track-label edit" contenteditable="true" data-track="' + esc(tr.tag) + '" data-ph="' + esc(tr.tag) + '">' + esc(tr.label) + '</span>' +
-          (showTag ? '<span class="track-tag">#' + esc(tr.tag) + '</span>' : '') + '</span>' +
-          '<span>' + tr.pct + '% &middot; ' + tr.done + '/' + tr.total + '</span>' +
-        '</div>' +
-        '<div class="bar-track"><div class="bar-fill" style="width:' + tr.pct + '%"></div></div>';
-      bars.appendChild(row);
-    });
-    hint.textContent = 'Click any track name to rename it. The objective tag underneath stays the same.';
-  }
+  p.tracks.slice(0,8).forEach(tr=>{
+    const row = document.createElement('div');
+    row.className = 'bar-row';
+    row.innerHTML =
+      '<div class="label-row">' +
+        '<span class="track-label edit" contenteditable="true" data-track="' + esc(tr.tag) + '" data-ph="' + esc(tr.tag) + '" title="' + esc(tr.tag) + '">' + esc(tr.label) + '</span>' +
+        '<span>' + tr.pct + '% &middot; ' + tr.done + '/' + tr.total + '</span>' +
+      '</div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:' + tr.pct + '%"></div></div>';
+    bars.appendChild(row);
+  });
 
   // ring
   const C = 144.5;
@@ -802,7 +790,7 @@ function render(){
   const pl = document.getElementById('profileList');
   pl.innerHTML = '';
   if(state.profile.lines.length === 0){
-    pl.innerHTML = '<div class="empty-note">Add whatever matters to you here &mdash; program, focus area, strengths, or a gap you\'re closing.</div>';
+    pl.innerHTML = '';
   } else {
     state.profile.lines.forEach(l=>{
       const row = document.createElement('div');
@@ -821,7 +809,7 @@ function render(){
   const feed = document.getElementById('logFeed');
   feed.innerHTML = '';
   if(state.logs.length === 0){
-    feed.innerHTML = '<div class="empty-note">No entries yet. Log your first update above.</div>';
+    feed.innerHTML = '<div class="empty-note">No entries yet.</div>';
   } else {
     [...state.logs].reverse().forEach(entry=>{
       const div = document.createElement('div');
@@ -840,7 +828,7 @@ function renderPageGrid(){
   const g = document.getElementById('pageGrid');
   g.innerHTML = '';
   if(state.metricPages.length === 0){
-    g.innerHTML = '<div class="empty-note">No metric pages yet. Name one above &mdash; each page holds as many metrics as you want, and every metric picks its own visual: KPI card, progress bar, bullet graph, gauge, thermometer, or line graph.</div>';
+    g.innerHTML = '<div class="empty-note">No metric pages yet.</div>';
     return;
   }
   state.metricPages.forEach(pg=>{
@@ -865,7 +853,7 @@ function renderMetricPage(){
   const grid = document.getElementById('metricGrid');
   grid.innerHTML = '';
   if(pg.metrics.length === 0){
-    grid.innerHTML = '<div class="panel"><div class="empty-note">Nothing tracked on this page yet. Add a metric above and pick how you want it drawn.</div></div>';
+    grid.innerHTML = '<div class="panel"><div class="empty-note">No metrics yet.</div></div>';
     return;
   }
   pg.metrics.forEach(m=>{
@@ -909,6 +897,150 @@ function backToHud(){
   window.scrollTo(0,0);
 }
 
+// ============================================================
+//  XLSX EXPORT — real .xlsx built in-page.
+//  Store-only ZIP + SpreadsheetML. No libraries, works offline.
+// ============================================================
+const CRC_TABLE = (()=>{
+  const t = new Uint32Array(256);
+  for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c = (c & 1) ? (0xEDB88320 ^ (c>>>1)) : (c>>>1); t[n]=c>>>0; }
+  return t;
+})();
+function crc32(bytes){
+  let c = 0xFFFFFFFF;
+  for(let i=0;i<bytes.length;i++) c = CRC_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c>>>8);
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+function zipStore(files){
+  const te = new TextEncoder();
+  const d = new Date();
+  const dosTime = ((d.getHours()<<11) | (d.getMinutes()<<5) | (Math.floor(d.getSeconds()/2))) & 0xFFFF;
+  const dosDate = (((d.getFullYear()-1980)<<9) | ((d.getMonth()+1)<<5) | d.getDate()) & 0xFFFF;
+  const locals = [], centrals = [];
+  let offset = 0;
+  files.forEach(f=>{
+    const name = te.encode(f.name);
+    const data = te.encode(f.data);
+    const crc  = crc32(data);
+    const lh = new Uint8Array(30 + name.length);
+    const lv = new DataView(lh.buffer);
+    lv.setUint32(0, 0x04034b50, true); lv.setUint16(4, 20, true); lv.setUint16(6, 0x0800, true);
+    lv.setUint16(8, 0, true); lv.setUint16(10, dosTime, true); lv.setUint16(12, dosDate, true);
+    lv.setUint32(14, crc, true); lv.setUint32(18, data.length, true); lv.setUint32(22, data.length, true);
+    lv.setUint16(26, name.length, true); lv.setUint16(28, 0, true);
+    lh.set(name, 30);
+    locals.push(lh, data);
+
+    const ch = new Uint8Array(46 + name.length);
+    const cv = new DataView(ch.buffer);
+    cv.setUint32(0, 0x02014b50, true); cv.setUint16(4, 20, true); cv.setUint16(6, 20, true);
+    cv.setUint16(8, 0x0800, true); cv.setUint16(10, 0, true);
+    cv.setUint16(12, dosTime, true); cv.setUint16(14, dosDate, true);
+    cv.setUint32(16, crc, true); cv.setUint32(20, data.length, true); cv.setUint32(24, data.length, true);
+    cv.setUint16(28, name.length, true);
+    cv.setUint32(42, offset, true);
+    ch.set(name, 46);
+    centrals.push(ch);
+
+    offset += lh.length + data.length;
+  });
+  const cdSize = centrals.reduce((a,b)=>a+b.length, 0);
+  const eocd = new Uint8Array(22);
+  const ev = new DataView(eocd.buffer);
+  ev.setUint32(0, 0x06054b50, true);
+  ev.setUint16(8, files.length, true); ev.setUint16(10, files.length, true);
+  ev.setUint32(12, cdSize, true); ev.setUint32(16, offset, true);
+  const parts = [...locals, ...centrals, eocd];
+  const total = parts.reduce((a,b)=>a+b.length, 0);
+  const out = new Uint8Array(total);
+  let o = 0; parts.forEach(p=>{ out.set(p, o); o += p.length; });
+  return out;
+}
+function xesc(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&apos;')
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g,'');
+}
+function colName(i){
+  let s = '';
+  for(i++; i > 0; i = Math.floor((i-1)/26)) s = String.fromCharCode(65 + (i-1)%26) + s;
+  return s;
+}
+function sheetXml(rows){
+  const body = rows.map((row, r)=>{
+    const cells = row.map((val, c)=>{
+      const ref = colName(c) + (r+1);
+      if(typeof val === 'number' && isFinite(val)) return '<c r="' + ref + '"><v>' + val + '</v></c>';
+      if(val === '' || val == null) return '';
+      return '<c r="' + ref + '" t="inlineStr"><is><t xml:space="preserve">' + xesc(val) + '</t></is></c>';
+    }).join('');
+    return '<row r="' + (r+1) + '">' + cells + '</row>';
+  }).join('');
+  const widest = rows.reduce((a,r)=>Math.max(a, r.length), 1);
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+    '<cols><col min="1" max="1" width="26" customWidth="1"/><col min="2" max="' + Math.max(2,widest) + '" width="14" customWidth="1"/></cols>' +
+    '<sheetData>' + body + '</sheetData></worksheet>';
+}
+function buildXlsx(sheetName, rows){
+  const safe = String(sheetName).replace(/[\[\]\*\/\\\?:]/g,'').slice(0,31) || 'Sheet1';
+  return zipStore([
+    { name:'[Content_Types].xml', data:
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+      '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+      '<Default Extension="xml" ContentType="application/xml"/>' +
+      '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' +
+      '<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>' +
+      '</Types>' },
+    { name:'_rels/.rels', data:
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+      '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>' +
+      '</Relationships>' },
+    { name:'xl/workbook.xml', data:
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" ' +
+      'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' +
+      '<sheets><sheet name="' + xesc(safe) + '" sheetId="1" r:id="rId1"/></sheets></workbook>' },
+    { name:'xl/_rels/workbook.xml.rels', data:
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+      '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>' +
+      '</Relationships>' },
+    { name:'xl/worksheets/sheet1.xml', data: sheetXml(rows) }
+  ]);
+}
+function exportPageXlsx(){
+  const pg = getPage(currentPageId);
+  if(!pg || pg.metrics.length === 0) return;
+  const maxPts = pg.metrics.reduce((a,m)=>Math.max(a, m.series.length), 0);
+  const head = ['Metric','Chart Type','Value','Unit','Target','% of Target'];
+  for(let i=0;i<maxPts;i++) head.push('Point ' + (i+1));
+  const rows = [head];
+  pg.metrics.forEach(m=>{
+    const row = [
+      m.label,
+      TYPE_NAMES[m.type] || 'KPI CARD',
+      m.value,
+      m.unit || '',
+      m.target,
+      m.target ? Math.round((m.value / m.target) * 1000) / 10 : ''
+    ];
+    for(let i=0;i<maxPts;i++) row.push(m.series[i] != null ? m.series[i] : '');
+    rows.push(row);
+  });
+  const bytes = buildXlsx(pg.name, rows);
+  const blob = new Blob([bytes], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = String(pg.name).replace(/[^\w\-]+/g,'-').replace(/^-|-$/g,'').toLowerCase() + '-metrics.xlsx';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 4000);
+}
+
 // ---------- ACTIONS (delegated) ----------
 document.addEventListener('click', e=>{
   const el = e.target.closest('[data-act]');
@@ -926,6 +1058,7 @@ document.addEventListener('click', e=>{
     case 'loadpage':    openPage(id); break;
     case 'delpage':     removePage(id); break;
     case 'backhud':     backToHud(); break;
+    case 'export':      exportPageXlsx(); break;
     case 'addmetric':   addMetric(); break;
     case 'delmetric':   removeMetric(id); break;
     case 'sendchat':    sendChat(); break;
@@ -1391,7 +1524,7 @@ async function sendChat(){
   const text = input.value.trim();
   if(!text) return;
   if(!apiOnline()){
-    pushMsg('ev', 'API OFFLINE — AWAITING CONNECTION. Add a Gemini API key under SYSTEM CONFIG (gear icon) to bring this channel up. Everything else on the HUD keeps working.', true);
+    pushMsg('ev', 'API OFFLINE — AWAITING CONNECTION.', true);
     return;
   }
   input.value = '';
@@ -1444,13 +1577,12 @@ function greet(){
   const nm = (state.user && state.user.name || '').trim();
   const hello = nm ? 'Hello, ' + nm + '. ' : '';
   if(!apiOnline()){
-    pushMsg('ev', hello + 'API OFFLINE — AWAITING CONNECTION. No Gemini key saved, so this channel is dark. Add one under SYSTEM CONFIG (gear icon) and it comes online. Objectives, mission, metrics, and logs all run fine without it.', true);
+    pushMsg('ev', hello + 'API OFFLINE — AWAITING CONNECTION.', true);
     return;
   }
   const blank = !state.mission.name && state.tasks.length === 0;
-  pushMsg('ev', 'API ONLINE — CONNECTION ESTABLISHED. ' + hello + (blank
-    ? "Tracker's completely blank, which is the point. Set your mission up top, add a few tagged objectives, and the progress tracks build themselves. Or just tell me what you're working toward and I'll set it up for you."
-    : "Hands on your data, eyes on the web. Add, check off, remove, log, or update a metric and watch it happen. What's the status?"));
+  pushMsg('ev', 'API ONLINE — CONNECTION ESTABLISHED. ' + hello +
+    (blank ? "What are you working toward?" : "What's the status?"));
 }
 
 // ---------- INIT ----------
